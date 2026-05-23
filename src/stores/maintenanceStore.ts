@@ -58,7 +58,11 @@ export const useMaintenanceStore = create<MaintenanceStore>((set) => ({
   
   reset: () =>
     set({
+      maintenance: [],
       selectedMaintenance: null,
+      inProgressMaintenance: [],
+      completedMaintenance: [],
+      isLoading: false,
       error: null,
     }),
 }))

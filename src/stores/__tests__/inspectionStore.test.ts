@@ -1,15 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useInspectionStore } from '../inspectionStore'
 
+// 在测试环境中使用 getState() 而非 React hook
+const getStore = () => useInspectionStore.getState()
+
 describe('InspectionStore', () => {
   beforeEach(() => {
-    // 重置 store
-    const store = useInspectionStore()
-    store.reset()
+    getStore().reset()
   })
 
   it('should initialize with default values', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     expect(store.plans).toEqual([])
     expect(store.records).toEqual([])
     expect(store.currentPlan).toBeNull()
@@ -19,7 +20,7 @@ describe('InspectionStore', () => {
   })
 
   it('should set plans', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockPlans = [
       {
         id: 1,
@@ -32,11 +33,11 @@ describe('InspectionStore', () => {
       },
     ]
     store.setPlans(mockPlans as any)
-    expect(store.plans).toEqual(mockPlans)
+    expect(getStore().plans).toEqual(mockPlans)
   })
 
   it('should set records', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockRecords = [
       {
         id: 1,
@@ -50,11 +51,11 @@ describe('InspectionStore', () => {
       },
     ]
     store.setRecords(mockRecords as any)
-    expect(store.records).toEqual(mockRecords)
+    expect(getStore().records).toEqual(mockRecords)
   })
 
   it('should set current plan', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockPlan = {
       id: 1,
       name: 'Plan 1',
@@ -65,11 +66,11 @@ describe('InspectionStore', () => {
       items: [],
     }
     store.setCurrentPlan(mockPlan as any)
-    expect(store.currentPlan).toEqual(mockPlan)
+    expect(getStore().currentPlan).toEqual(mockPlan)
   })
 
   it('should add record item', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockItem = {
       id: 1,
       recordId: 0,
@@ -84,12 +85,12 @@ describe('InspectionStore', () => {
       updatedAt: new Date().toISOString(),
     }
     store.addRecordItem(mockItem)
-    expect(store.recordItems).toHaveLength(1)
-    expect(store.recordItems[0]).toEqual(mockItem)
+    expect(getStore().recordItems).toHaveLength(1)
+    expect(getStore().recordItems[0]).toEqual(mockItem)
   })
 
   it('should remove record item', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockItem = {
       id: 1,
       recordId: 0,
@@ -104,14 +105,14 @@ describe('InspectionStore', () => {
       updatedAt: new Date().toISOString(),
     }
     store.addRecordItem(mockItem)
-    expect(store.recordItems).toHaveLength(1)
+    expect(getStore().recordItems).toHaveLength(1)
 
     store.removeRecordItem(1)
-    expect(store.recordItems).toHaveLength(0)
+    expect(getStore().recordItems).toHaveLength(0)
   })
 
   it('should update record item', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     const mockItem = {
       id: 1,
       recordId: 0,
@@ -127,38 +128,38 @@ describe('InspectionStore', () => {
     }
     store.addRecordItem(mockItem)
     store.updateRecordItem(1, { result: 'UPDATED' })
-    expect(store.recordItems[0].result).toBe('UPDATED')
+    expect(getStore().recordItems[0].result).toBe('UPDATED')
   })
 
   it('should set loading state', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     store.setIsLoading(true)
-    expect(store.isLoading).toBe(true)
+    expect(getStore().isLoading).toBe(true)
     store.setIsLoading(false)
-    expect(store.isLoading).toBe(false)
+    expect(getStore().isLoading).toBe(false)
   })
 
   it('should set error state', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     store.setError('Test error')
-    expect(store.error).toBe('Test error')
+    expect(getStore().error).toBe('Test error')
     store.setError(null)
-    expect(store.error).toBeNull()
+    expect(getStore().error).toBeNull()
   })
 
   it('should reset store', () => {
-    const store = useInspectionStore()
+    const store = getStore()
     store.setPlans([{ id: 1 } as any])
     store.setIsLoading(true)
     store.setError('Error')
 
     store.reset()
 
-    expect(store.plans).toEqual([])
-    expect(store.records).toEqual([])
-    expect(store.currentPlan).toBeNull()
-    expect(store.recordItems).toEqual([])
-    expect(store.isLoading).toBe(false)
-    expect(store.error).toBeNull()
+    expect(getStore().plans).toEqual([])
+    expect(getStore().records).toEqual([])
+    expect(getStore().currentPlan).toBeNull()
+    expect(getStore().recordItems).toEqual([])
+    expect(getStore().isLoading).toBe(false)
+    expect(getStore().error).toBeNull()
   })
 })

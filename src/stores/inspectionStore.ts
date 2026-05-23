@@ -61,9 +61,12 @@ export const useInspectionStore = create<InspectionStore>((set) => ({
   
   reset: () =>
     set({
+      plans: [],
+      records: [],
       currentPlan: null,
       currentRecord: null,
       recordItems: [],
+      isLoading: false,
       error: null,
     }),
 }))

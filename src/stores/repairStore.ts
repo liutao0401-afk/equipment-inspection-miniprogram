@@ -57,8 +57,11 @@ export const useRepairStore = create<RepairStore>((set) => ({
   
   reset: () =>
     set({
+      repairs: [],
       selectedRepair: null,
+      devices: [],
       searchQuery: '',
+      isLoading: false,
       error: null,
     }),
 }))
