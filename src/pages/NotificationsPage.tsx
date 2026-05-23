@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Bell, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { notificationApi } from '../lib/api'
-import type { User, Notification } from '../types'
+import type { Notification } from '../types'
 
-interface NotificationsPageProps {
-  user: User
-}
-
-export function NotificationsPage({ user }: NotificationsPageProps) {
+export function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isLoading, setIsLoading] = useState(true)
 

@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home,
   ClipboardCheck,
   Wrench,
-  Settings,
   Bell,
-  User,
+  User as UserIcon,
   LogOut,
   Menu,
   X,
@@ -30,7 +29,7 @@ export function MainLayout({ user, onLogout, children }: MainLayoutProps) {
     { path: '/repair', label: '报修', icon: Wrench },
     { path: '/maintenance', label: '维修', icon: Zap },
     { path: '/notifications', label: '通知', icon: Bell },
-    { path: '/profile', label: '个人', icon: User },
+    { path: '/profile', label: '个人', icon: UserIcon },
   ]
 
   const isActive = (path: string) => location.pathname === path

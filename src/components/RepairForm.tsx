@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -25,12 +25,9 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm<RepairFormData>({
     resolver: zodResolver(repairSchema),
   })
-
-  const deviceId = watch('deviceId')
 
   const onImageUpload = (imageList: ImageListType) => {
     if (imageList.length + images.length > 5) {
@@ -149,7 +146,7 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
           multiple
           acceptType={['jpg', 'jpeg', 'png']}
         >
-          {({ imageList, onImageUpload: handleUpload, onImageRemoveAll }) => (
+          {({ imageList, onImageUpload: handleUpload }) => (
             <div className="space-y-3">
               <button
                 type="button"

@@ -98,7 +98,7 @@ export const appStorage = {
   },
 
   getLastSync(): number {
-    return storage.getItem('lastSync', 0)
+    return storage.getItem('lastSync', 0) ?? 0
   },
 
   setAppVersion(version: string): void {
@@ -106,6 +106,6 @@ export const appStorage = {
   },
 
   getAppVersion(): string {
-    return storage.getItem('appVersion', '1.0.0')
+    return storage.getItem('appVersion', '1.0.0') ?? '1.0.0'
   },
 }

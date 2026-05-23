@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { LoginPage } from './pages/LoginPage'
@@ -73,13 +73,13 @@ function App() {
             user ? (
               <MainLayout user={user} onLogout={handleLogout}>
                 <Routes>
-                  <Route path="/" element={<HomePage user={user} />} />
-                  <Route path="/inspection" element={<InspectionPage user={user} />} />
-                  <Route path="/repair" element={<RepairPage user={user} />} />
-                  <Route path="/maintenance" element={<MaintenancePage user={user} />} />
-                  <Route path="/profile" element={<ProfilePage user={user} />} />
-                  <Route path="/notifications" element={<NotificationsPage user={user} />} />
-                  <Route path="/settings" element={<SettingsPage user={user} />} />
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/inspection" element={<InspectionPage />} />
+                  <Route path="/repair" element={<RepairPage />} />
+                  <Route path="/maintenance" element={<MaintenancePage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </MainLayout>

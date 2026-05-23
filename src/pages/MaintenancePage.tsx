@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Zap, CheckCircle, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { maintenanceApi } from '../lib/api'
-import type { User, Maintenance } from '../types'
+import { MaintenanceForm } from '../components/MaintenanceForm'
+import type { Maintenance } from '../types'
 
-interface MaintenancePageProps {
-  user: User
-}
-
-export function MaintenancePage({ user }: MaintenancePageProps) {
+export function MaintenancePage() {
   const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending')
   const [maintenance, setMaintenance] = useState<Maintenance[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedMaintenance, setSelectedMaintenance] = useState<Maintenance | null>(null)
+  const [showForm, setShowForm] = useState(false)
 
   useEffect(() => {
     loadMaintenance()
@@ -31,6 +30,17 @@ export function MaintenancePage({ user }: MaintenancePageProps) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleSelectMaintenance = (item: Maintenance) => {
+    setSelectedMaintenance(item)
+    setShowForm(true)
+  }
+
+  const handleFormSuccess = () => {
+    setShowForm(false)
+    setSelectedMaintenance(null)
+    loadMaintenance()
   }
 
   return (
@@ -64,6 +74,25 @@ export function MaintenancePage({ user }: MaintenancePageProps) {
           已完成
         </button>
       </div>
+
+      {/* Form Modal */}
+      {showForm && selectedMaintenance && (
+        <div className="bg-white rounded-lg p-6 border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">完成维修</h2>
+            <button
+              onClick={() => {
+                setShowForm(false)
+                setSelectedMaintenance(null)
+              }}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+          </div>
+          <MaintenanceForm maintenance={selectedMaintenance} onSuccess={handleFormSuccess} />
+        </div>
+      )}
 
       {/* Content */}
       {isLoading ? (
@@ -120,7 +149,10 @@ export function MaintenancePage({ user }: MaintenancePageProps) {
                   {item.maintenanceDetails}
                 </p>
               )}
-              <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition">
+              <button
+                onClick={() => handleSelectMaintenance(item)}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition"
+              >
                 {activeTab === 'pending' ? '完成维修' : '查看详情'}
               </button>
             </div>

@@ -1,38 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { ClipboardCheck, Plus, Eye } from 'lucide-react'
-import { toast } from 'sonner'
-import { inspectionApi } from '../lib/api'
-import type { User, InspectionPlan, InspectionRecord } from '../types'
+import { useState } from 'react'
+import { ClipboardCheck, Plus, Eye, ChevronRight } from 'lucide-react'
+import { useInspection } from '../hooks/useInspection'
+import { useInspectionStore } from '../stores/inspectionStore'
+import { InspectionForm } from '../components/InspectionForm'
 
-interface InspectionPageProps {
-  user: User
-}
+export function InspectionPage() {
+  const [activeTab, setActiveTab] = useState<'plans' | 'records' | 'execute'>('plans')
+  const { plans, records } = useInspection()
+  const { currentPlan, setCurrentPlan, isLoading } = useInspectionStore()
 
-export function InspectionPage({ user }: InspectionPageProps) {
-  const [activeTab, setActiveTab] = useState<'plans' | 'records'>('plans')
-  const [plans, setPlans] = useState<InspectionPlan[]>([])
-  const [records, setRecords] = useState<InspectionRecord[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    loadData()
-  }, [activeTab])
-
-  const loadData = async () => {
-    try {
-      setIsLoading(true)
-      if (activeTab === 'plans') {
-        const data = await inspectionApi.listPlans()
-        setPlans(data)
-      } else {
-        const data = await inspectionApi.listRecords()
-        setRecords(data.data)
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error)
-      toast.error('加载失败')
-    } finally {
-      setIsLoading(false)
+  const handleStartInspection = (planId: number) => {
+    const plan = plans.find((p) => p.id === planId)
+    if (plan) {
+      setCurrentPlan(plan)
+      setActiveTab('execute')
     }
   }
 
@@ -66,6 +47,18 @@ export function InspectionPage({ user }: InspectionPageProps) {
         >
           巡检记录
         </button>
+        {currentPlan && (
+          <button
+            onClick={() => setActiveTab('execute')}
+            className={`px-4 py-2 font-medium border-b-2 transition ${
+              activeTab === 'execute'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            执行巡检
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -103,7 +96,10 @@ export function InspectionPage({ user }: InspectionPageProps) {
                   <p>班组: {plan.teamName}</p>
                   <p>项目数: {plan.items?.length || 0}</p>
                 </div>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2">
+                <button
+                  onClick={() => handleStartInspection(plan.id)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2"
+                >
                   <Plus className="w-4 h-4" />
                   开始巡检
                 </button>
@@ -111,7 +107,7 @@ export function InspectionPage({ user }: InspectionPageProps) {
             ))
           )}
         </div>
-      ) : (
+      ) : activeTab === 'records' ? (
         <div className="space-y-4">
           {records.length === 0 ? (
             <div className="text-center py-12">
@@ -129,11 +125,13 @@ export function InspectionPage({ user }: InspectionPageProps) {
                     <h3 className="font-semibold text-gray-900">{record.planName}</h3>
                     <p className="text-sm text-gray-600">{record.inspectorName}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    record.status === 'completed'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      record.status === 'completed'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                  >
                     {record.status === 'completed' ? '已完成' : '进行中'}
                   </span>
                 </div>
@@ -142,13 +140,16 @@ export function InspectionPage({ user }: InspectionPageProps) {
                   <p>开始时间: {new Date(record.startTime).toLocaleString('zh-CN')}</p>
                   <p>异常项: {record.abnormalCount}</p>
                 </div>
-                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition">
+                <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition flex items-center justify-center gap-2">
                   查看详情
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
             ))
           )}
         </div>
+      ) : (
+        <InspectionForm />
       )}
     </div>
   )

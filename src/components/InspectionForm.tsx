@@ -1,21 +1,11 @@
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { useState } from 'react'
 import { useInspectionStore } from '../stores/inspectionStore'
 import { useInspection } from '../hooks/useInspection'
 import { CheckCircle, AlertCircle, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-const inspectionItemSchema = z.object({
-  itemId: z.number(),
-  result: z.string().optional(),
-  status: z.enum(['normal', 'abnormal']),
-  remarks: z.string().optional(),
-})
-
 export function InspectionForm() {
-  const { currentPlan, recordItems, addRecordItem, removeRecordItem, updateRecordItem } =
+  const { currentPlan, recordItems, addRecordItem, removeRecordItem } =
     useInspectionStore()
   const { submitInspection } = useInspection()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -53,12 +43,12 @@ export function InspectionForm() {
       deviceId: 0,
       itemName: currentPlan.items?.find((i) => i.id === newItem.itemId)?.name || '',
       result: newItem.result,
-      status: newItem.status,
+      status: newItem.status === 'abnormal' ? 'abnormal' : 'normal',
       remarks: newItem.remarks,
       images: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    }
+    } as any
 
     addRecordItem(item)
     setNewItem({ itemId: 0, result: '', status: 'normal', remarks: '' })

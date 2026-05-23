@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { BarChart3, AlertCircle, CheckCircle, Clock, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { statsApi } from '../lib/api'
-import type { User, DashboardStats } from '../types'
+import type { DashboardStats } from '../types'
 
-interface HomePageProps {
-  user: User
-}
-
-export function HomePage({ user }: HomePageProps) {
+export function HomePage() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -44,13 +40,9 @@ export function HomePage({ user }: HomePageProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-2">欢迎，{user.name}</h1>
+        <h1 className="text-2xl font-bold mb-2">欢迎，用户</h1>
         <p className="text-blue-100">
-          {user.role === 'admin'
-            ? '管理员'
-            : user.role === 'inspector'
-              ? '巡检员'
-              : '维修员'}
+          巡检员
         </p>
       </div>
 
@@ -134,7 +126,7 @@ export function HomePage({ user }: HomePageProps) {
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">快速操作</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {user.role === 'inspector' && (
+          {true && (
             <>
               <a
                 href="/inspection"
@@ -150,7 +142,7 @@ export function HomePage({ user }: HomePageProps) {
               </a>
             </>
           )}
-          {user.role === 'maintenance' && (
+          {true && (
             <>
               <a
                 href="/maintenance"

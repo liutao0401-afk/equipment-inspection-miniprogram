@@ -57,7 +57,21 @@ export function useInspection() {
       setError(null)
       const plan = await inspectionApi.getPlan(planId)
       setCurrentPlan(plan)
-      setRecordItems(plan.items || [])
+      // Convert InspectionItem[] to InspectionRecordItem[]
+      const recordItems = (plan.items || []).map((item) => ({
+        id: item.id,
+        recordId: 0,
+        itemId: item.id,
+        deviceId: 0,
+        itemName: item.name,
+        result: '',
+        status: 'normal' as any, // Use enum value
+        remarks: '',
+        images: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }))
+      setRecordItems(recordItems as any)
     } catch (error) {
       const message = error instanceof Error ? error.message : '获取计划详情失败'
       setError(message)

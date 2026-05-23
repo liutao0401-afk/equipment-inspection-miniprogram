@@ -1,13 +1,7 @@
-import React from 'react'
 import { Settings, Info, Trash2, Shield } from 'lucide-react'
 import { toast } from 'sonner'
-import type { User } from '../types'
 
-interface SettingsPageProps {
-  user: User
-}
-
-export function SettingsPage({ user }: SettingsPageProps) {
+export function SettingsPage() {
   const handleClearCache = () => {
     try {
       localStorage.clear()
@@ -21,7 +15,6 @@ export function SettingsPage({ user }: SettingsPageProps) {
   const handleExportData = () => {
     try {
       const data = {
-        user,
         exportTime: new Date().toISOString(),
       }
       const json = JSON.stringify(data, null, 2)

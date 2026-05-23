@@ -259,7 +259,7 @@ export interface MaintenanceListResponse {
   pageSize: number
 }
 
-export interface CompleteMaintenance Request {
+export interface CompleteMaintenanceRequest {
   maintenanceDetails: string
   images: string[]
 }
