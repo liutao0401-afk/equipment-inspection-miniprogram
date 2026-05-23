@@ -7,10 +7,6 @@ page {
   box-sizing: border-box;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 /* 全屏 web-view */
 .webview-container {
   width: 100%;
