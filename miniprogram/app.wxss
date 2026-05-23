@@ -1,0 +1,24 @@
+/* app.wxss - 全局样式 */
+page {
+  background-color: #F8FAFC;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 28rpx;
+  color: #1E293B;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 全屏 web-view */
+.webview-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+web-view {
+  width: 100%;
+  height: 100%;
+}

@@ -1,8 +1,8 @@
 {
-  "miniprogramRoot": "dist/",
+  "miniprogramRoot": "miniprogram/",
   "projectname": "equipment-inspection-miniprogram",
   "description": "设备巡检微信小程序",
-  "appid": "YOUR_APP_ID",
+  "appid": "wx37388495c5af983a",
   "setting": {
     "urlCheck": true,
     "es6": true,
@@ -40,19 +40,20 @@
     "protectedView": true,
     "authPrivateTextEditorAll": false,
     "showES6CompileModule": false,
-    "useStaticServer": true
+    "useStaticServer": true,
+    "compileWorklet": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "libVersion": "2.19.4",
-  "debugOptions": {
-    "hidedInDevtools": []
-  },
-  "scripts": {},
-  "staticServerOptions": {
-    "baseURL": "",
-    "pathPrefix": "dist",
-    "maxAge": 0
-  },
   "isGameTourist": false,
   "condition": {
     "search": {
@@ -79,5 +80,11 @@
       "current": -1,
       "list": []
     }
-  }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
 }
