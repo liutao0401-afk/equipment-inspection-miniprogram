@@ -65,7 +65,7 @@ describe('RepairStore', () => {
       status: 'pending',
     }
     store.addRepair(mockRepair as any)
-    store.updateRepair(1, { status: 'processing' })
+    store.updateRepair(1, { status: 'processing' as any })
     expect(store.repairs[0].status).toBe('processing')
   })
 

@@ -1,0 +1,83 @@
+{
+  "miniprogramRoot": "dist/",
+  "projectname": "equipment-inspection-miniprogram",
+  "description": "设备巡检微信小程序",
+  "appid": "YOUR_APP_ID",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadFile": "",
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "enableEngineNative": false,
+    "enableNormalVirtualHost": false,
+    "useIsolateContext": true,
+    "useCompilerModule": true,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmSearchDepth": 0,
+    "effect": true,
+    "protectedView": true,
+    "authPrivateTextEditorAll": false,
+    "showES6CompileModule": false,
+    "useStaticServer": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.19.4",
+  "debugOptions": {
+    "hidedInDevtools": []
+  },
+  "scripts": {},
+  "staticServerOptions": {
+    "baseURL": "",
+    "pathPrefix": "dist",
+    "maxAge": 0
+  },
+  "isGameTourist": false,
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "current": -1,
+      "list": []
+    },
+    "plugin": {
+      "current": -1,
+      "list": []
+    },
+    "gamePlugin": {
+      "current": -1,
+      "list": []
+    },
+    "miniprogram": {
+      "current": -1,
+      "list": []
+    }
+  }
+}
