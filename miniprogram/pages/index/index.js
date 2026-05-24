@@ -1,5 +1,19 @@
-// pages/index/index.js
 const app = getApp()
+
+function buildWebviewUrl() {
+  const { h5Url, token, userInfo } = app.globalData
+  const hashParams = []
+
+  if (token) {
+    hashParams.push(`wechat_token=${encodeURIComponent(token)}`)
+  }
+
+  if (userInfo) {
+    hashParams.push(`wechat_user=${encodeURIComponent(JSON.stringify(userInfo))}`)
+  }
+
+  return hashParams.length > 0 ? `${h5Url}#${hashParams.join('&')}` : h5Url
+}
 
 Page({
   data: {
@@ -10,32 +24,25 @@ Page({
   },
 
   onLoad() {
-    const url = app.globalData.h5Url
-    console.log('加载 H5 地址:', url)
     this.setData({
-      webviewUrl: url,
+      webviewUrl: buildWebviewUrl(),
       isLoading: true,
       loadError: false
     })
   },
 
   onShow() {
-    // 每次显示时刷新 URL（处理登录状态变化）
-    const url = app.globalData.h5Url
+    const url = buildWebviewUrl()
     if (this.data.webviewUrl !== url) {
       this.setData({ webviewUrl: url })
     }
   },
 
-  // web-view 加载完成
-  onWebviewLoad(e) {
-    console.log('H5 加载完成', e.detail)
+  onWebviewLoad() {
     this.setData({ isLoading: false, loadError: false })
   },
 
-  // web-view 加载错误
-  onWebviewError(e) {
-    console.error('H5 加载失败', e.detail)
+  onWebviewError() {
     this.setData({
       isLoading: false,
       loadError: true,
@@ -43,7 +50,6 @@ Page({
     })
   },
 
-  // 重新加载
   onRetry() {
     this.setData({
       isLoading: true,
@@ -51,11 +57,10 @@ Page({
       webviewUrl: ''
     })
     setTimeout(() => {
-      this.setData({ webviewUrl: app.globalData.h5Url })
+      this.setData({ webviewUrl: buildWebviewUrl() })
     }, 100)
   },
 
-  // 分享
   onShareAppMessage() {
     return {
       title: '设备巡检系统',

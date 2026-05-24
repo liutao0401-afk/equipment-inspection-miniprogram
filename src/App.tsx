@@ -10,25 +10,64 @@ import { ProfilePage } from './pages/ProfilePage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { MainLayout } from './components/MainLayout'
+import { authApi } from './lib/api'
 import type { User } from './types'
+
+function clearAuthStorage() {
+  localStorage.removeItem('user')
+  localStorage.removeItem('token')
+}
+
+function readWechatSessionFromHash() {
+  const hash = window.location.hash.startsWith('#')
+    ? window.location.hash.slice(1)
+    : window.location.hash
+  const params = new URLSearchParams(hash)
+  const token = params.get('wechat_token')
+  const user = params.get('wechat_user')
+
+  if (token) {
+    localStorage.setItem('token', token)
+  }
+
+  if (user) {
+    localStorage.setItem('user', user)
+  }
+
+  if (token || user) {
+    window.history.replaceState(null, document.title, window.location.pathname + window.location.search)
+  }
+}
 
 function App() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // 从 localStorage 恢复用户信息
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
+    const restoreSession = async () => {
+      readWechatSessionFromHash()
+
+      const token = localStorage.getItem('token')
+      if (!token) {
+        clearAuthStorage()
+        setIsLoading(false)
+        return
+      }
+
       try {
-        setUser(JSON.parse(storedUser))
+        const profile = await authApi.getProfile()
+        setUser(profile)
+        localStorage.setItem('user', JSON.stringify(profile))
       } catch (error) {
-        console.error('Failed to parse stored user:', error)
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
+        console.error('Failed to restore session:', error)
+        clearAuthStorage()
+        setUser(null)
+      } finally {
+        setIsLoading(false)
       }
     }
-    setIsLoading(false)
+
+    restoreSession()
   }, [])
 
   const handleLogin = (userData: User, token: string) => {
@@ -39,8 +78,7 @@ function App() {
 
   const handleLogout = () => {
     setUser(null)
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
+    clearAuthStorage()
   }
 
   if (isLoading) {
