@@ -27,12 +27,14 @@
           data-id="{{item.id}}"
         >
           <view class="plan-card-header">
-            <text class="plan-name">{{item.routeName || '未命名线路'}}</text>
-            <text class="plan-badge {{item.isActive ? 'badge-active' : 'badge-inactive'}}">
-              {{item.isActive ? '启用' : '停用'}}
-            </text>
+            <text class="plan-name">{{item.name || item.routeName || '未命名计划'}}</text>
+            <text class="plan-code">{{item.code}}</text>
           </view>
           <view class="plan-card-body">
+            <view class="plan-info-item">
+              <text class="plan-info-label">线路</text>
+              <text class="plan-info-value">{{item.routeName || '未指定'}}</text>
+            </view>
             <view class="plan-info-item">
               <text class="plan-info-label">班组</text>
               <text class="plan-info-value">{{item.teamName || '未指派'}}</text>
@@ -44,6 +46,9 @@
           </view>
           <view class="plan-card-footer">
             <text class="plan-date">{{item.startDate}} ~ {{item.endDate || '长期'}}</text>
+            <text class="plan-status-badge {{item.isActive ? 'badge-active' : 'badge-inactive'}}">
+              {{item.isActive ? '启用' : '停用'}}
+            </text>
           </view>
         </view>
       </view>

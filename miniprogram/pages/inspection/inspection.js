@@ -22,6 +22,8 @@ const CYCLE_LABEL = { daily: '日报', weekly: '周报', monthly: '月报', hour
 function adaptPlan(item) {
   return {
     id: item.id,
+    name: item.name || '',
+    code: item.code || '',
     routeId: item.routeId,
     routeName: item.routeName || '',
     teamId: item.teamId,
