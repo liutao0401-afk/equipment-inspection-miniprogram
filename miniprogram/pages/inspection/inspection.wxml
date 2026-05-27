@@ -187,7 +187,7 @@
           <view class="device-card-footer">
             <view wx:if="{{item._inspected}}" class="inspected-badge">
               <t-icon name="check-circle" size="24rpx" />
-              <text>本周期已巡检</text>
+              <text>{{item._cycleLabel}}</text>
             </view>
             <view wx:else class="start-btn">开始巡检</view>
           </view>

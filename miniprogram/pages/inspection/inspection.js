@@ -46,6 +46,87 @@ function getFreqLabel(frequency) {
   return CYCLE_LABEL[frequency] || frequency
 }
 
+/**
+ * 根据巡检周期计算当前周期的起止时间
+ */
+function getCycleRange(frequency) {
+  const now = new Date()
+  let start, end
+
+  if (frequency === 'daily') {
+    // 当日 00:00:00 ~ 23:59:59
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+  } else if (frequency === 'weekly') {
+    // 本周一 00:00:00 ~ 本周日 23:59:59
+    const dayOfWeek = now.getDay() // 0=Sun
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + mondayOffset)
+    start.setHours(0, 0, 0, 0)
+    end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + mondayOffset + 6, 23, 59, 59)
+  } else if (frequency === 'monthly') {
+    // 本月1日 00:00:00 ~ 本月最后一天 23:59:59
+    start = new Date(now.getFullYear(), now.getMonth(), 1)
+    start.setHours(0, 0, 0, 0)
+    end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+  } else if (frequency === 'hourly') {
+    // 过去1小时内
+    start = new Date(now.getTime() - 60 * 60 * 1000)
+    end = now
+  } else if (typeof frequency === 'string' && frequency.startsWith('hourly-')) {
+    // 过去 N 小时内
+    const hours = parseInt(frequency.replace('hourly-', ''), 10) || 1
+    start = new Date(now.getTime() - hours * 60 * 60 * 1000)
+    end = now
+  } else {
+    // fallback 到日周期
+    start = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+  }
+
+  return { start, end }
+}
+
+function formatISODate(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+/**
+ * 判断 createdAt（如 "2026-05-27 07:04:42"）是否在时间窗口内
+ */
+function isWithinWindow(createdAt, windowStart, windowEnd) {
+  const ts = new Date(createdAt.replace(' ', 'T')).getTime()
+  return ts >= windowStart.getTime() && ts <= windowEnd.getTime()
+}
+
+/**
+ * 根据计划周期加载该周期内的已巡检记录
+ */
+async function loadCycleRecords(app, planId, frequency) {
+  const { start, end } = getCycleRange(frequency)
+  // 对于小时周期，日期范围需要覆盖可能的时间段（前后各多一天兜底）
+  const dateMargin = frequency === 'hourly' || (typeof frequency === 'string' && frequency.startsWith('hourly-'))
+    ? 1 : 0
+  const queryStart = new Date(start.getTime() - dateMargin * 24 * 60 * 60 * 1000)
+  const queryEnd = new Date(end.getTime() + dateMargin * 24 * 60 * 60 * 1000)
+
+  const params = `planId=${planId}&startDate=${formatISODate(queryStart)}&endDate=${formatISODate(queryEnd)}`
+  const result = await app.request({ url: `/inspection/records?${params}` })
+  const records = (result && result.items) || []
+
+  // 对小时周期，还需要按 createdAt 精确过滤
+  if (dateMargin > 0) {
+    return records.filter(r =>
+      r.createdAt && isWithinWindow(r.createdAt, start, end)
+    )
+  }
+
+  return records
+}
+
 Page({
   data: {
     loading: false,
@@ -80,6 +161,8 @@ Page({
 
     // 当前周期已巡检设备ID集合
     inspectedDeviceIds: [],
+    deviceLastInspected: {}, // 设备ID -> 最近一次巡检时间（用于小时周期提示）
+    selectedPlanFrequency: '', // 当前选中计划的周期
 
     // 当前巡检
     currentDevice: null,
@@ -168,15 +251,6 @@ Page({
         defaultStaffIdx = 0
       }
 
-      // 加载今日已巡检设备
-      const today = this.getToday()
-      let inspectedIds = []
-      try {
-        const recordsResult = await app.request({ url: `/inspection/records?startDate=${today}&endDate=${today}` })
-        const records = (recordsResult && recordsResult.items) || []
-        inspectedIds = (records || []).map(r => r.deviceId).filter(Boolean)
-      } catch (_) { /* 忽略 */ }
-
       this.setData({
         plans,
         devices,
@@ -187,7 +261,7 @@ Page({
         staffs: filteredStaffs,
         selectedStaffId: defaultStaffId,
         staffIdx: defaultStaffIdx,
-        inspectedDeviceIds: inspectedIds,
+        inspectedDeviceIds: [],
         step: 'plans',
         selectedPlanId: '',
         selectedRouteId: '',
@@ -206,18 +280,42 @@ Page({
   // ==================== 步骤切换 ====================
 
   // 选择计划，进入设备选择
-  selectPlan(e) {
+  async selectPlan(e) {
     const id = e.currentTarget.dataset.id
     const plan = this.data.plans.find(p => p.id === id)
     if (!plan) return
 
     const routeIdx = this.data.routeFilterOptions.findIndex(r => r.id === plan.routeId)
+
+    // 根据计划周期加载该周期内的已巡检记录
+    let inspectedIds = []
+    let deviceLastInspected = {}
+    try {
+      const records = await loadCycleRecords(app, plan.id, plan.frequency)
+      inspectedIds = (records || []).map(r => r.deviceId).filter(Boolean)
+
+      // 记录每个设备最近一次巡检时间（用于小时周期展示）
+      for (const r of records) {
+        if (r.deviceId && r.createdAt) {
+          if (!deviceLastInspected[r.deviceId] || r.createdAt > deviceLastInspected[r.deviceId]) {
+            deviceLastInspected[r.deviceId] = r.createdAt
+          }
+        }
+      }
+    } catch (_) { /* 忽略 */ }
+
     this.setData({
       step: 'select',
       selectedPlanId: id,
+      selectedPlanFrequency: plan.frequency,
       selectedRouteId: plan.routeId || '',
       routeFilterIdx: routeIdx >= 0 ? routeIdx : 0,
       cycleLabel: CYCLE_LABEL[plan.frequency] || '今日',
+      inspectedDeviceIds: inspectedIds,
+      deviceLastInspected: deviceLastInspected,
+      selectedAreaId: '',
+      searchQuery: '',
+      areaFilterIdx: 0,
     })
 
     this.applyFilters()
@@ -228,11 +326,14 @@ Page({
     this.setData({
       step: 'plans',
       selectedPlanId: '',
+      selectedPlanFrequency: '',
       selectedRouteId: '',
       selectedAreaId: '',
       searchQuery: '',
       routeFilterIdx: 0,
       areaFilterIdx: 0,
+      inspectedDeviceIds: [],
+      deviceLastInspected: {},
     })
   },
 
@@ -281,7 +382,7 @@ Page({
   },
 
   applyFilters() {
-    const { devices, routes, selectedRouteId, selectedAreaId, searchQuery, inspectedDeviceIds } = this.data
+    const { devices, routes, selectedRouteId, selectedAreaId, searchQuery, inspectedDeviceIds, selectedPlanFrequency } = this.data
     let result = [...devices]
 
     // 按线路筛选
@@ -302,10 +403,21 @@ Page({
       )
     }
 
+    // 生成周期标签
+    let cycleLabel = '本周期已巡检'
+    if (selectedPlanFrequency === 'daily') cycleLabel = '今日已巡检'
+    else if (selectedPlanFrequency === 'weekly') cycleLabel = '本周已巡检'
+    else if (selectedPlanFrequency === 'monthly') cycleLabel = '本月已巡检'
+    else if (selectedPlanFrequency === 'hourly') cycleLabel = '本小时已巡检'
+    else if (typeof selectedPlanFrequency === 'string' && selectedPlanFrequency.startsWith('hourly-')) {
+      cycleLabel = `本周期已巡检`
+    }
+
     // 标记是否已巡检
     const withStatus = result.map(d => ({
       ...d,
       _inspected: inspectedDeviceIds.includes(d.id),
+      _cycleLabel: cycleLabel,
     }))
 
     this.setData({ filteredDevices: withStatus })
