@@ -6,13 +6,13 @@ App({
   },
 
   onLaunch() {
-    // 自动选择API地址：开发者工具用 127.0.0.1，手机预览用局域网IP
+    // 自动选择API地址：开发者工具用 127.0.0.1，手机预览用公网 HTTPS
     try {
       const sysInfo = wx.getSystemInfoSync()
       const isDevtools = sysInfo.platform === 'devtools'
       this.globalData.apiBaseUrl = isDevtools
         ? 'http://127.0.0.1:3000/api'
-        : 'http://192.188.88.20:3000/api'
+        : 'https://weixin.hazlai.com/api'
     } catch {
       this.globalData.apiBaseUrl = 'http://127.0.0.1:3000/api'
     }
