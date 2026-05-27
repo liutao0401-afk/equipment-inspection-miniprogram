@@ -1,0 +1,110 @@
+<view class="page home-page">
+  <view class="top-panel section">
+    <view class="top-row">
+      <view>
+        <text class="eyebrow">设备巡检工作台</text>
+        <text class="hero-title">今日现场概览</text>
+      </view>
+      <button class="refresh-btn" bindtap="loadStats">刷新</button>
+    </view>
+    <view class="health-strip">
+      <view>
+        <text class="health-label">待处理</text>
+        <text class="health-value">{{stats.pendingRepairs || 0}}</text>
+      </view>
+      <view class="health-divider"></view>
+      <view>
+        <text class="health-label">异常巡检</text>
+        <text class="health-value warning">{{stats.abnormalInspections || 0}}</text>
+      </view>
+      <view class="health-divider"></view>
+      <view>
+        <text class="health-label">已完成维修</text>
+        <text class="health-value success">{{stats.completedMaintenance || 0}}</text>
+      </view>
+    </view>
+  </view>
+
+  <t-loading wx:if="{{loading}}" theme="spinner" text="加载中" />
+
+  <view wx:else>
+    <view class="stats-grid section">
+      <view class="stat-card primary">
+        <text class="stat-label">设备总数</text>
+        <text class="stat-value">{{stats.totalDevices || 0}}</text>
+        <text class="stat-foot">覆盖全部路线</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-label">巡检记录</text>
+        <text class="stat-value">{{stats.totalInspections || 0}}</text>
+        <text class="stat-foot">累计提交</text>
+      </view>
+      <view class="stat-card danger">
+        <text class="stat-label">报修总数</text>
+        <text class="stat-value">{{stats.totalRepairs || 0}}</text>
+        <text class="stat-foot">含处理中任务</text>
+      </view>
+      <view class="stat-card success">
+        <text class="stat-label">维修任务</text>
+        <text class="stat-value">{{stats.maintenanceTasks || 0}}</text>
+        <text class="stat-foot">待登记/已完成</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <text class="section-title">快捷操作</text>
+        <text class="section-more">常用流程</text>
+      </view>
+      <view class="action-grid">
+        <view wx:if="{{!isMaintenance}}" class="action-card inspection" bindtap="goInspection">
+          <view class="action-icon">✓</view>
+          <text class="action-title">开始巡检</text>
+          <text class="action-desc">选择计划并提交结果</text>
+        </view>
+        <view class="action-card repair" bindtap="goRepair">
+          <view class="action-icon">+</view>
+          <text class="action-title">提交报修</text>
+          <text class="action-desc">搜索设备登记故障</text>
+        </view>
+        <view wx:if="{{!isInspectorOrLeader}}" class="action-card maintenance" bindtap="goMaintenance">
+          <view class="action-icon">⚒</view>
+          <text class="action-title">维修处理</text>
+          <text class="action-desc">完成任务并登记结果</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 消息提醒 -->
+    <view class="section">
+      <view class="section-head" bindtap="goMessages">
+        <view class="section-head-left">
+          <text class="section-title">消息提醒</text>
+          <text wx:if="{{unreadCount > 0}}" class="unread-badge">{{unreadCount}}</text>
+        </view>
+        <view class="section-more">
+          <text>查看全部</text>
+          <t-icon name="chevron-right" size="24rpx" />
+        </view>
+      </view>
+      <view wx:if="{{recentMessages.length === 0}}" class="no-msg-tip">
+        <text>暂无消息</text>
+      </view>
+      <view wx:else class="msg-list-home">
+        <view
+          wx:for="{{recentMessages}}"
+          wx:key="id"
+          class="msg-item-home"
+          bindtap="goMessages"
+        >
+          <view class="msg-icon-home msg-{{item.type}}">{{item.type === 'warning' ? '!' : item.type === 'error' ? '✕' : item.type === 'success' ? '✓' : 'i'}}</view>
+          <view class="msg-content-home">
+            <text class="msg-title-home">{{item.title}}</text>
+            <text class="msg-desc-home">{{item.content}}</text>
+          </view>
+          <text class="msg-time-home">{{item._time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

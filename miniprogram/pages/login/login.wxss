@@ -1,0 +1,47 @@
+.login-page {
+  min-height: 100vh;
+  padding: 96rpx 32rpx 32rpx;
+  background: linear-gradient(180deg, #eaf2ff 0%, #f5f7fa 48%);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 56rpx;
+}
+
+.brand-mark {
+  width: 112rpx;
+  height: 112rpx;
+  margin-bottom: 24rpx;
+  border-radius: 28rpx;
+  background: #0052d9;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  font-weight: 700;
+}
+
+.form-card {
+  margin-bottom: 24rpx;
+}
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 24rpx;
+  color: #667085;
+}
+
+.demo-title {
+  color: #344054;
+  font-weight: 600;
+}
+
+.demo-line {
+  font-size: 24rpx;
+}

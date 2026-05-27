@@ -1,0 +1,191 @@
+<view class="page plans-page">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <text class="page-title">巡检计划</text>
+    <t-button wx:if="{{isLeader}}" size="small" bind:tap="showAddPlan" class="add-btn">
+      <t-icon name="add" slot="icon" />
+      新增计划
+    </t-button>
+  </view>
+
+  <t-loading wx:if="{{loading}}" theme="spinner" text="加载中..." />
+
+  <block wx:else>
+    <!-- 空状态 -->
+    <t-empty wx:if="{{plans.length === 0}}" title="暂无巡检计划" description="点击右上角按钮创建新计划" />
+
+    <!-- 计划列表 -->
+    <view wx:else class="plan-list">
+      <view wx:for="{{plans}}" wx:key="id" class="plan-card">
+        <view class="plan-header">
+          <view class="plan-route">
+            <t-icon name="route" size="36rpx" />
+            <view class="plan-title-group">
+              <text class="plan-route-name">{{item.name || item.routeName || '未知计划'}}</text>
+              <text class="plan-code">{{item.code}}</text>
+            </view>
+          </view>
+          <view class="plan-status">
+            <block wx:if="{{isLeader}}">
+              <t-switch
+                size="24rpx"
+                value="{{item.isActive}}"
+                data-id="{{item.id}}"
+                bind:change="toggleActive"
+              />
+            </block>
+            <text wx:else class="status-tag {{item.isActive ? 'status-on' : 'status-off'}}">{{item.isActive ? '启用' : '停用'}}</text>
+          </view>
+        </view>
+
+        <view class="plan-body">
+          <view class="plan-info">
+            <text class="plan-label">巡检线路</text>
+            <text class="plan-value">{{item.routeName || '未知线路'}}</text>
+          </view>
+          <view class="plan-info">
+            <text class="plan-label">班组</text>
+            <text class="plan-value">{{item.teamName || '未指派'}}</text>
+          </view>
+          <view class="plan-info">
+            <text class="plan-label">周期</text>
+            <text class="plan-value plan-cycle">{{item._freqLabel}}</text>
+          </view>
+          <view class="plan-info">
+            <text class="plan-label">开始日期</text>
+            <text class="plan-value">{{item.startDate || '-'}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{isLeader}}" class="plan-actions">
+          <view class="action-btn edit-btn" bindtap="showEditPlan" data-id="{{item.id}}">
+            <t-icon name="edit" size="28rpx" />
+            <text>编辑</text>
+          </view>
+          <view class="action-btn delete-btn" bindtap="confirmDelete" data-id="{{item.id}}">
+            <t-icon name="delete" size="28rpx" />
+            <text>删除</text>
+          </view>
+        </view>
+        <view wx:else class="plan-viewonly">
+          <text class="viewonly-text">仅查看</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 新增/编辑弹窗 -->
+  <t-popup
+    visible="{{formVisible}}"
+    placement="bottom"
+    bind:visible-change="onFormClose"
+    style="border-radius: 32rpx 32rpx 0 0;"
+  >
+    <view class="form-panel">
+      <view class="form-header">
+        <text class="form-title">{{editingPlanId ? '编辑计划' : '新增计划'}}</text>
+        <t-button size="small" variant="text" bind:tap="closeForm">取消</t-button>
+      </view>
+
+      <view class="form-body">
+        <!-- 巡检线路 -->
+        <view class="form-group">
+          <text class="form-label">巡检线路</text>
+          <picker
+            mode="selector"
+            range="{{routeOptions}}"
+            range-key="label"
+            value="{{formData.routeIdx}}"
+            bindchange="onRouteChange"
+          >
+            <view class="form-input">
+              <text wx:if="{{formData.routeIdx >= 0}}">{{routeOptions[formData.routeIdx].label}}</text>
+              <text wx:else class="placeholder">请选择巡检线路</text>
+              <t-icon name="chevron-down" size="28rpx" />
+            </view>
+          </picker>
+        </view>
+
+        <!-- 巡检班组 -->
+        <view class="form-group">
+          <text class="form-label">巡检班组</text>
+          <picker
+            mode="selector"
+            range="{{teamOptions}}"
+            range-key="label"
+            value="{{formData.teamIdx}}"
+            bindchange="onTeamChange"
+          >
+            <view class="form-input">
+              <text wx:if="{{formData.teamIdx >= 0}}">{{teamOptions[formData.teamIdx].label}}</text>
+              <text wx:else class="placeholder">请选择巡检班组</text>
+              <t-icon name="chevron-down" size="28rpx" />
+            </view>
+          </picker>
+        </view>
+
+        <!-- 巡检周期 -->
+        <view class="form-group">
+          <text class="form-label">巡检周期</text>
+          <view class="cycle-group">
+            <view
+              wx:for="{{cycleOptions}}"
+              wx:key="value"
+              class="cycle-option {{formData.cycle === item.value ? 'cycle-active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="onCycleChange"
+            >
+              <text>{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 小时周期配置 -->
+        <view wx:if="{{formData.cycle === 'hourly'}}" class="form-group">
+          <text class="form-label">小时间隔</text>
+          <picker
+            mode="selector"
+            range="{{hourOptions}}"
+            range-key="label"
+            value="{{formData.hoursIdx}}"
+            bindchange="onHoursChange"
+          >
+            <view class="form-input">
+              <text>{{formData.hoursInterval || 1}} 小时/次</text>
+              <t-icon name="chevron-down" size="28rpx" />
+            </view>
+          </picker>
+        </view>
+
+        <!-- 开始日期 -->
+        <view class="form-group">
+          <text class="form-label">开始日期</text>
+          <picker mode="date" value="{{formData.startDate}}" bindchange="onStartDateChange">
+            <view class="form-input">
+              <text>{{formData.startDate || '请选择'}}</text>
+              <t-icon name="chevron-down" size="28rpx" />
+            </view>
+          </picker>
+        </view>
+
+        </view>
+
+      <view class="form-footer">
+        <t-button block theme="primary" loading="{{submitting}}" bind:tap="savePlan">
+          {{editingPlanId ? '保存修改' : '创建计划'}}
+        </t-button>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- 删除确认弹窗 -->
+  <t-dialog
+    visible="{{deleteVisible}}"
+    title="确认删除"
+    content="确定要删除该巡检计划吗？删除后不可恢复。"
+    confirmBtn="删除"
+    cancelBtn="取消"
+    bind:confirm="deletePlan"
+    bind:cancel="closeDelete"
+  />
+</view>

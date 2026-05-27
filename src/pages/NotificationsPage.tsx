@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Bell, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { notificationApi } from '../lib/api'
@@ -31,10 +31,10 @@ export function NotificationsPage() {
       setNotifications(notifications.map((n) =>
         n.id === id ? { ...n, read: true } : n
       ))
-      toast.success('已标记为已读')
+      toast.success('宸叉爣璁颁负宸茶')
     } catch (error) {
       console.error('Failed to mark as read:', error)
-      toast.error('操作失败')
+      toast.error('鎿嶄綔澶辫触')
     }
   }
 
@@ -42,25 +42,25 @@ export function NotificationsPage() {
     try {
       await notificationApi.markAllAsRead()
       setNotifications(notifications.map((n) => ({ ...n, read: true })))
-      toast.success('已标记全部为已读')
+      toast.success('宸叉爣璁板叏閮ㄤ负宸茶')
     } catch (error) {
       console.error('Failed to mark all as read:', error)
-      toast.error('操作失败')
+      toast.error('鎿嶄綔澶辫触')
     }
   }
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_repair':
-        return '🔧'
+        return '馃敡'
       case 'inspection_abnormal':
-        return '⚠️'
+        return '鈿狅笍'
       case 'repair_update':
-        return '📝'
+        return '馃摑'
       case 'system':
-        return 'ℹ️'
+        return '鈩癸笍'
       default:
-        return '📢'
+        return '馃摙'
     }
   }
 
@@ -77,7 +77,7 @@ export function NotificationsPage() {
             onClick={handleMarkAllAsRead}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
-            全部标记为已读
+            鍏ㄩ儴鏍囪涓哄凡璇?
           </button>
         )}
       </div>
@@ -121,7 +121,7 @@ export function NotificationsPage() {
                       onClick={() => handleMarkAsRead(notification.id)}
                       className="text-xs text-blue-600 hover:text-blue-700 font-medium"
                     >
-                      标记已读
+                      鏍囪宸茶
                     </button>
                   )}
                   <button className="text-gray-400 hover:text-gray-600">

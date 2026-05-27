@@ -1,0 +1,379 @@
+<view class="page repair-page">
+  <!-- 加载中 -->
+  <t-loading wx:if="{{loading && repairs.length === 0}}" theme="spinner" text="加载中..." />
+
+  <block wx:else>
+    <!-- ===== 页面标题 ===== -->
+    <view class="header">
+      <view class="header-left">
+        <view class="header-icon">
+          <t-icon name="repair" size="36rpx" />
+        </view>
+        <text class="page-title">报修管理</text>
+      </view>
+    </view>
+
+    <!-- ===== 统计卡片 ===== -->
+    <view class="stats-grid">
+      <view
+        class="stat-card {{statusFilter === 'all' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="all"
+      >
+        <text class="stat-label">全部</text>
+        <text class="stat-number">{{repairs.length}}</text>
+      </view>
+      <view
+        class="stat-card stat-pending {{statusFilter === 'pending' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="pending"
+      >
+        <text class="stat-label">待派单</text>
+        <text class="stat-number">{{pendingCount}}</text>
+      </view>
+      <view
+        class="stat-card stat-processing {{statusFilter === 'processing' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="processing"
+      >
+        <text class="stat-label">处理中</text>
+        <text class="stat-number">{{processingCount}}</text>
+      </view>
+      <view
+        class="stat-card stat-repaired {{statusFilter === 'repaired' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="repaired"
+      >
+        <text class="stat-label">已修复</text>
+        <text class="stat-number">{{repairedCount}}</text>
+      </view>
+      <view
+        class="stat-card stat-accepted {{statusFilter === 'accepted' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="accepted"
+      >
+        <text class="stat-label">已验收</text>
+        <text class="stat-number">{{acceptedCount}}</text>
+      </view>
+    </view>
+
+    <!-- ===== 搜索框 ===== -->
+    <view class="search-bar">
+      <t-icon name="search" size="28rpx" />
+      <input
+        class="search-input"
+        placeholder="搜索报修单号、设备名称..."
+        value="{{searchQuery}}"
+        bindinput="onSearchInput"
+      />
+    </view>
+
+    <!-- ===== 报修列表 ===== -->
+    <view class="repair-list">
+      <!-- 空状态 -->
+      <view wx:if="{{paginatedRepairs.length === 0 && !loading}}" class="empty-state">
+        <t-icon name="repair" size="80rpx" />
+        <text class="empty-text">暂无报修记录</text>
+      </view>
+
+      <view wx:else>
+        <!-- 卡片列表 -->
+        <view
+          wx:for="{{paginatedRepairs}}"
+          wx:key="id"
+          class="card repair-card"
+        >
+          <!-- 头部：编号 + 状态 -->
+          <view class="repair-card-header">
+            <text class="repair-code">{{item.code}}</text>
+            <text class="status-badge badge-{{item.status}}">{{item._statusLabel}}</text>
+          </view>
+
+          <!-- 设备名称 -->
+          <text class="repair-device">{{item.deviceName}}</text>
+
+          <!-- 描述 -->
+          <text class="repair-desc">{{item.description}}</text>
+
+          <!-- 底部：时间 + 操作 -->
+          <view class="repair-card-footer">
+            <text class="repair-time">{{item._createTime}}</text>
+            <view class="repair-actions">
+              <view class="action-btn" bindtap="openDetailPopup" data-id="{{item.id}}">
+                <t-icon name="browse" size="28rpx" />
+                <text>查看</text>
+              </view>
+              <view wx:if="{{item.status !== 'accepted' && !isInspector}}" class="action-btn" bindtap="openProcessPopup" data-id="{{item.id}}">
+                <t-icon name="edit" size="28rpx" />
+                <text>处理</text>
+              </view>
+              <view wx:if="{{!isInspector}}" class="action-btn action-delete" bindtap="deleteRepair" data-id="{{item.id}}" data-code="{{item.code}}">
+                <t-icon name="delete" size="28rpx" />
+                <text>删除</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 加载更多 -->
+        <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMore">
+          <text>加载更多（{{remainingCount}} 条）</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 新建报修浮动按钮 ===== -->
+    <view class="fab" bindtap="openCreatePopup">
+      <t-icon name="add" size="40rpx" />
+    </view>
+  </block>
+
+  <!-- ===== 新建报修弹窗 ===== -->
+  <t-popup
+    visible="{{showCreatePopup}}"
+    placement="bottom"
+    bind:visible-change="closeCreatePopup"
+  >
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">新建报修单</text>
+      </view>
+      <view class="popup-body">
+        <!-- 设备搜索 -->
+        <view class="field">
+          <text class="label">选择设备 <text class="required">*</text></text>
+          <view class="device-search-row">
+            <input
+              class="input device-search-input"
+              placeholder="输入设备名称或编号搜索"
+              value="{{deviceSearchQuery}}"
+              bindinput="onDeviceSearchInput"
+              confirm-type="search"
+              bindconfirm="searchDevices"
+            />
+            <t-button size="small" variant="outline" loading="{{searchingDevice}}" bind:tap="searchDevices">搜索</t-button>
+          </view>
+        </view>
+        <!-- 设备搜索结果 -->
+        <view wx:if="{{devices.length > 0}}" class="device-search-results">
+          <view
+            wx:for="{{devices}}"
+            wx:key="id"
+            class="device-option {{deviceId === item.id ? 'device-option-selected' : ''}}"
+            bindtap="selectDevice"
+            data-id="{{item.id}}"
+            data-code="{{item.code}}"
+            data-name="{{item.name}}"
+          >
+            <view class="device-option-info">
+              <text class="device-option-name">{{item.name}}</text>
+              <text class="device-option-code">{{item.code}}</text>
+            </view>
+            <t-icon wx:if="{{deviceId === item.id}}" name="check" size="28rpx" />
+          </view>
+        </view>
+        <!-- 已选设备 -->
+        <view wx:if="{{deviceId && deviceName}}" class="selected-device">
+          <text>已选：{{deviceName}}（{{deviceCode}}）</text>
+        </view>
+
+        <!-- 优先级 -->
+        <view class="field">
+          <text class="label">优先级</text>
+          <picker
+            range="{{priorities}}"
+            range-key="label"
+            value="{{priorityIndex}}"
+            bindchange="onPriorityChange"
+          >
+            <view class="input">{{priorities[priorityIndex].label}}</view>
+          </picker>
+        </view>
+
+        <!-- 故障照片 -->
+        <view class="field">
+          <text class="label">故障照片</text>
+          <view class="photo-grid">
+            <view
+              wx:for="{{photos}}"
+              wx:key="*this"
+              class="photo-item"
+            >
+              <image class="photo-thumb" src="{{item.local || item.url || item}}" mode="aspectFill" />
+              <view class="photo-remove" bindtap="removePhoto" data-index="{{index}}">
+                <t-icon name="close-circle-filled" size="36rpx" />
+              </view>
+            </view>
+            <view wx:if="{{photos.length < 3}}" class="photo-add" bindtap="takePhoto">
+              <t-icon name="camera" size="48rpx" />
+              <text class="photo-add-text">拍照</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 问题描述 -->
+        <view class="field">
+          <text class="label">问题描述 <text class="required">*</text></text>
+          <textarea
+            class="textarea"
+            placeholder="请详细描述设备故障情况..."
+            value="{{problemDescription}}"
+            bindinput="onProblemDescriptionInput"
+          />
+        </view>
+      </view>
+      <view class="popup-footer create-footer">
+        <t-button class="footer-cancel" variant="outline" theme="primary" bind:tap="closeCreatePopup">取消</t-button>
+        <t-button class="footer-submit" theme="primary" loading="{{submitting}}" bind:tap="submitRepair">提交报修</t-button>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- ===== 详情弹窗 ===== -->
+  <t-popup
+    visible="{{showDetailPopup}}"
+    placement="bottom"
+    bind:visible-change="closeDetailPopup"
+  >
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">报修单详情</text>
+        <t-button size="small" variant="text" bind:tap="closeDetailPopup">关闭</t-button>
+      </view>
+      <view class="popup-body">
+        <block wx:if="{{selectedRepair}}">
+          <!-- 编号 + 状态 -->
+          <view class="detail-header">
+            <view class="detail-code-area">
+              <text class="detail-label">报修单号</text>
+              <text class="detail-code">{{selectedRepair.code}}</text>
+            </view>
+            <text class="status-badge badge-{{selectedRepair.status}}">{{selectedRepair._statusLabel || statusLabel(selectedRepair.status)}}</text>
+          </view>
+
+          <!-- 基本信息 -->
+          <view class="detail-section">
+            <text class="detail-section-title">基本信息</text>
+            <view class="detail-row">
+              <text class="detail-label">设备名称</text>
+              <text class="detail-value">{{selectedRepair.deviceName}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">设备编号</text>
+              <text class="detail-value">{{selectedRepair.deviceCode}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">设备位置</text>
+              <text class="detail-value">{{selectedRepair._deviceLocation || '-'}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">优先级</text>
+              <text class="detail-value">{{selectedRepair.priority === 'high' ? '高' : selectedRepair.priority === 'low' ? '低' : '中'}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">报修时间</text>
+              <text class="detail-value">{{selectedRepair._createTime || formatTime(selectedRepair.createTime)}}</text>
+            </view>
+          </view>
+
+          <!-- 问题描述 -->
+          <view class="detail-section">
+            <text class="detail-section-title">问题描述</text>
+            <view class="detail-desc-box">
+              <text>{{selectedRepair.description}}</text>
+            </view>
+          </view>
+
+          <!-- 照片 -->
+          <view wx:if="{{selectedRepairImages.length > 0}}" class="detail-section">
+            <text class="detail-section-title">故障照片</text>
+            <view class="photo-grid">
+              <view wx:for="{{selectedRepairImages}}" wx:key="*this" class="photo-item" bindtap="previewImage" data-src="{{item}}">
+                <image class="photo-thumb" src="{{item}}" mode="aspectFill" />
+              </view>
+            </view>
+          </view>
+
+          <!-- 处理信息 -->
+          <view wx:if="{{selectedRepair.teamId}}" class="detail-section">
+            <text class="detail-section-title">处理信息</text>
+            <view class="detail-row">
+              <text class="detail-label">处理班组</text>
+              <text class="detail-value">{{getTeamName(selectedRepair.teamId)}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- ===== 处理弹窗 ===== -->
+  <t-popup
+    visible="{{showProcessPopup}}"
+    placement="bottom"
+    bind:visible-change="closeProcessPopup"
+  >
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">处理报修单</text>
+        <t-button size="small" variant="text" bind:tap="closeProcessPopup">取消</t-button>
+      </view>
+      <view class="popup-body">
+        <block wx:if="{{selectedRepair}}">
+          <text class="popup-desc">报修单：{{selectedRepair.code}} - {{selectedRepair.deviceName}}</text>
+
+          <!-- 处理状态 -->
+          <view class="field">
+            <text class="label">处理状态</text>
+            <picker
+              range="{{statusOptions}}"
+              range-key="label"
+              value="{{processStatusIdx}}"
+              bindchange="onProcessStatusChange"
+            >
+              <view class="input">{{statusOptions[processStatusIdx].label}}</view>
+            </picker>
+          </view>
+
+          <!-- 处理班组 -->
+          <view class="field">
+            <text class="label">处理班组</text>
+            <picker
+              range="{{teams}}"
+              range-key="name"
+              value="{{processTeamIdx}}"
+              bindchange="onProcessTeamChange"
+            >
+              <view class="input">{{processTeamName || '请选择班组'}}</view>
+            </picker>
+          </view>
+
+          <!-- 处理备注 -->
+          <view class="field">
+            <text class="label">处理备注</text>
+            <textarea
+              class="textarea"
+              placeholder="填写处理情况..."
+              value="{{processRemark}}"
+              bindinput="onProcessRemarkInput"
+            />
+          </view>
+
+          <!-- 维修内容 -->
+          <view class="field">
+            <text class="label">维修内容</text>
+            <textarea
+              class="textarea"
+              placeholder="详细描述维修内容..."
+              value="{{repairContent}}"
+              bindinput="onRepairContentInput"
+            />
+          </view>
+        </block>
+      </view>
+      <view class="popup-footer">
+        <t-button block theme="primary" loading="{{submitting}}" bind:tap="processRepair">确认更新</t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>

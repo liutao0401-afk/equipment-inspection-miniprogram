@@ -1,4 +1,4 @@
-import { UserIcon, Mail, Phone, Users } from 'lucide-react'
+﻿import { UserIcon, Mail, Phone, Users } from 'lucide-react'
 
 export function ProfilePage() {
 
@@ -7,7 +7,7 @@ export function ProfilePage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <UserIcon className="w-8 h-8 text-blue-600" />
-        <h1 className="text-2xl font-bold text-gray-900">个人信息</h1>
+        <h1 className="text-2xl font-bold text-gray-900">涓汉淇℃伅</h1>
       </div>
 
       {/* Profile Card */}
@@ -17,8 +17,8 @@ export function ProfilePage() {
             <UserIcon className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">用户信息</h2>
-            <p className="text-gray-600">个人资料</p>
+            <h2 className="text-2xl font-bold text-gray-900">鐢ㄦ埛淇℃伅</h2>
+            <p className="text-gray-600">涓汉璧勬枡</p>
           </div>
         </div>
 
@@ -27,8 +27,8 @@ export function ProfilePage() {
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <UserIcon className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-xs text-gray-500">用户名</p>
-              <p className="text-gray-900 font-medium">用户</p>
+              <p className="text-xs text-gray-500">用户名/p>
+              <p className="text-gray-900 font-medium">鐢ㄦ埛</p>
             </div>
           </div>
 
@@ -37,7 +37,7 @@ export function ProfilePage() {
             <Users className="w-5 h-5 text-gray-400" />
             <div>
               <p className="text-xs text-gray-500">角色</p>
-              <p className="text-gray-900 font-medium">巡检员</p>
+              <p className="text-gray-900 font-medium">宸℃鍛?/p>
             </div>
           </div>
 
@@ -45,8 +45,8 @@ export function ProfilePage() {
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Users className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-xs text-gray-500">班组</p>
-              <p className="text-gray-900 font-medium">班组信息</p>
+              <p className="text-xs text-gray-500">鐝粍</p>
+              <p className="text-gray-900 font-medium">鐝粍淇℃伅</p>
             </div>
           </div>
 
@@ -54,7 +54,7 @@ export function ProfilePage() {
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Mail className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-xs text-gray-500">邮箱</p>
+              <p className="text-xs text-gray-500">閭</p>
               <p className="text-gray-900 font-medium">user@example.com</p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export function ProfilePage() {
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <Phone className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-xs text-gray-500">电话</p>
+              <p className="text-xs text-gray-500">鐢佃瘽</p>
               <p className="text-gray-900 font-medium">+86 10 1234 5678</p>
             </div>
           </div>
@@ -72,8 +72,8 @@ export function ProfilePage() {
 
       {/* Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">💡 提示</p>
-        <p>如需修改个人信息，请联系管理员。</p>
+        <p className="font-medium mb-1">馃挕 提示</p>
+        <p>濡傞渶淇敼涓汉淇℃伅锛岃鑱旂郴绠＄悊鍛樸/p>
       </div>
     </div>
   )

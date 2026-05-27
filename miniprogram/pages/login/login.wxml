@@ -1,0 +1,26 @@
+<view class="login-page">
+  <view class="brand">
+    <view class="brand-mark">巡</view>
+    <text class="title">设备巡检</text>
+    <text class="subtitle">巡检、报修、维修一体化工作台</text>
+  </view>
+
+  <view class="card form-card">
+    <view class="field">
+      <text class="label">用户名</text>
+      <input class="input" value="{{username}}" placeholder="请输入用户名" bindinput="onUsernameInput" />
+    </view>
+    <view class="field">
+      <text class="label">密码</text>
+      <input class="input" value="{{password}}" password placeholder="请输入密码" bindinput="onPasswordInput" />
+    </view>
+    <t-button block theme="primary" loading="{{loading}}" bind:tap="onLogin">登录</t-button>
+  </view>
+
+  <view class="demo-card">
+    <text class="demo-title">测试账号</text>
+    <text class="demo-line">inspector / 123456</text>
+    <text class="demo-line">maintenance / 123456</text>
+    <text class="demo-line">admin / 123456</text>
+  </view>
+</view>

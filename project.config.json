@@ -4,7 +4,7 @@
   "description": "设备巡检微信小程序",
   "appid": "wx37388495c5af983a",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": true,
     "enhance": true,
     "postcss": true,
@@ -53,7 +53,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
+  "libVersion": "3.16.1",
   "isGameTourist": false,
   "condition": {
     "search": {

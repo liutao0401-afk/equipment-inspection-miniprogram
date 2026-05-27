@@ -1,0 +1,242 @@
+<view class="page maintenance-page">
+  <!-- 加载中 -->
+  <t-loading wx:if="{{loading && maintenances.length === 0}}" theme="spinner" text="加载中..." />
+
+  <block wx:else>
+    <!-- ===== 页面标题 ===== -->
+    <view class="header">
+      <view class="header-left">
+        <view class="header-icon">
+          <t-icon name="repair" size="36rpx" />
+        </view>
+        <text class="page-title">维修管理</text>
+      </view>
+    </view>
+
+    <!-- ===== 统计卡片 ===== -->
+    <view class="stats-grid">
+      <view
+        class="stat-card {{statusFilter === 'all' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="all"
+      >
+        <text class="stat-label">全部</text>
+        <text class="stat-number">{{maintenances.length}}</text>
+      </view>
+      <view
+        class="stat-card stat-processing {{statusFilter === 'in_progress' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="in_progress"
+      >
+        <text class="stat-label">处理中</text>
+        <text class="stat-number">{{inProgressCount}}</text>
+      </view>
+      <view
+        class="stat-card stat-completed {{statusFilter === 'completed' ? 'stat-active' : ''}}"
+        bindtap="switchFilter"
+        data-status="completed"
+      >
+        <text class="stat-label">已完成</text>
+        <text class="stat-number">{{completedCount}}</text>
+      </view>
+    </view>
+
+    <!-- ===== 搜索框 ===== -->
+    <view class="search-bar">
+      <t-icon name="search" size="28rpx" />
+      <input
+        class="search-input"
+        placeholder="搜索设备名称、编号..."
+        value="{{searchQuery}}"
+        bindinput="onSearchInput"
+      />
+    </view>
+
+    <!-- ===== 维修列表 ===== -->
+    <view class="maintenance-list">
+      <!-- 空状态 -->
+      <view wx:if="{{paginatedItems.length === 0 && !loading}}" class="empty-state">
+        <t-icon name="repair" size="80rpx" />
+        <text class="empty-text">暂无维修记录</text>
+      </view>
+
+      <view wx:else>
+        <!-- 卡片列表 -->
+        <view
+          wx:for="{{paginatedItems}}"
+          wx:key="id"
+          class="card maintenance-card"
+        >
+          <!-- 头部：编号 + 类型 + 状态 -->
+          <view class="maintenance-card-header">
+            <view class="maintenance-code-area">
+              <text class="maintenance-code">{{item.code || '维修#' + item.id}}</text>
+              <text class="maintenance-type-tag">{{item.type === 'repair' ? '报修维修' : item.type === 'maintenance' ? '定期维护' : '更换'}}</text>
+            </view>
+            <text class="status-badge badge-{{item.status}}">{{item._statusLabel}}</text>
+          </view>
+
+          <!-- 设备名称 -->
+          <text class="maintenance-device">{{item.deviceName || item.deviceCode || '未知设备'}}</text>
+
+          <!-- 描述 -->
+          <text class="maintenance-desc">{{item.description || '暂无描述'}}</text>
+
+          <!-- 关联报修 -->
+          <text wx:if="{{item.repairCode}}" class="maintenance-ref">关联报修：{{item.repairCode}}</text>
+
+          <!-- 底部：时间 + 操作 -->
+          <view class="maintenance-card-footer">
+            <text class="maintenance-time">{{item._createTime}}</text>
+            <view class="maintenance-actions">
+              <view class="action-btn" bindtap="openDetailPopup" data-id="{{item.id}}">
+                <t-icon name="browse" size="28rpx" />
+                <text>查看</text>
+              </view>
+              <view wx:if="{{item.status !== 'completed'}}" class="action-btn" bindtap="openCompletePopup" data-id="{{item.id}}">
+                <t-icon name="check" size="28rpx" />
+                <text>完成</text>
+              </view>
+              <view class="action-btn action-delete" bindtap="deleteMaintenance" data-id="{{item.id}}">
+                <t-icon name="delete" size="28rpx" />
+                <text>删除</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 加载更多 -->
+        <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMore">
+          <text>加载更多（{{remainingCount}} 条）</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 详情弹窗 ===== -->
+  <t-popup
+    visible="{{showDetailPopup}}"
+    placement="bottom"
+    bind:visible-change="closeDetailPopup"
+  >
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">维修详情</text>
+        <t-button size="small" variant="text" bind:tap="closeDetailPopup">关闭</t-button>
+      </view>
+      <view class="popup-body">
+        <block wx:if="{{selectedItem}}">
+          <!-- 编号 + 状态 -->
+          <view class="detail-header">
+            <view class="detail-code-area">
+              <text class="detail-label">维修编号</text>
+              <text class="detail-code">{{selectedItem.code || '维修#' + selectedItem.id}}</text>
+            </view>
+            <text class="status-badge badge-{{selectedItem.status}}">{{selectedItem._statusLabel}}</text>
+          </view>
+
+          <!-- 基本信息 -->
+          <view class="detail-section">
+            <text class="detail-section-title">基本信息</text>
+            <view class="detail-row">
+              <text class="detail-label">设备名称</text>
+              <text class="detail-value">{{selectedItem.deviceName || '-'}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">设备编号</text>
+              <text class="detail-value">{{selectedItem.deviceCode || '-'}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">维修类型</text>
+              <text class="detail-value">{{selectedItem.type === 'repair' ? '报修维修' : selectedItem.type === 'maintenance' ? '定期维护' : '更换'}}</text>
+            </view>
+            <view wx:if="{{selectedItem.repairCode}}" class="detail-row">
+              <text class="detail-label">关联报修</text>
+              <text class="detail-value">{{selectedItem.repairCode}}</text>
+            </view>
+            <view class="detail-row">
+              <text class="detail-label">创建时间</text>
+              <text class="detail-value">{{selectedItem._createTime}}</text>
+            </view>
+            <view wx:if="{{selectedItem.endTime}}" class="detail-row">
+              <text class="detail-label">完成时间</text>
+              <text class="detail-value">{{selectedItem._endTime}}</text>
+            </view>
+          </view>
+
+          <!-- 维修描述 -->
+          <view class="detail-section">
+            <text class="detail-section-title">维修描述</text>
+            <view class="detail-desc-box">
+              <text>{{selectedItem.description || '暂无描述'}}</text>
+            </view>
+          </view>
+
+          <!-- 照片 -->
+          <view wx:if="{{selectedItemImages.length > 0}}" class="detail-section">
+            <text class="detail-section-title">现场照片</text>
+            <view class="photo-grid">
+              <view wx:for="{{selectedItemImages}}" wx:key="*this" class="photo-item">
+                <image class="photo-thumb" src="{{item}}" mode="aspectFill" />
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- ===== 完成登记弹窗 ===== -->
+  <t-popup
+    visible="{{showCompletePopup}}"
+    placement="bottom"
+    bind:visible-change="closeCompletePopup"
+  >
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">维修完成登记</text>
+        <t-button size="small" variant="text" bind:tap="closeCompletePopup">取消</t-button>
+      </view>
+      <view class="popup-body">
+        <block wx:if="{{selectedItem}}">
+          <text class="popup-desc">设备：{{selectedItem.deviceName || selectedItem.deviceCode}}</text>
+
+          <!-- 维修结果 -->
+          <view class="field">
+            <text class="label">维修结果 <text class="required">*</text></text>
+            <textarea
+              class="textarea"
+              placeholder="请描述维修过程、故障原因和处理结果"
+              value="{{completeRemark}}"
+              bindinput="onCompleteRemarkInput"
+            />
+          </view>
+
+          <!-- 现场照片 -->
+          <view class="field">
+            <text class="label">现场照片</text>
+            <view class="photo-grid">
+              <view
+                wx:for="{{photos}}"
+                wx:key="*this"
+                class="photo-item"
+              >
+                <image class="photo-thumb" src="{{item}}" mode="aspectFill" />
+                <view class="photo-remove" bindtap="removePhoto" data-index="{{index}}">
+                  <t-icon name="close-circle-filled" size="36rpx" />
+                </view>
+              </view>
+              <view wx:if="{{photos.length < 3}}" class="photo-add" bindtap="takePhoto">
+                <t-icon name="camera" size="48rpx" />
+                <text class="photo-add-text">拍照</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+      <view class="popup-footer">
+        <t-button block theme="primary" loading="{{submitting}}" bind:tap="submitComplete">确认完成</t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>

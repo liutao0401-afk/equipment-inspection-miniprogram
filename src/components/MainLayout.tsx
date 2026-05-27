@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Home,
@@ -24,12 +24,12 @@ export function MainLayout({ user, onLogout, children }: MainLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const menuItems = [
-    { path: '/', label: '首页', icon: Home },
-    { path: '/inspection', label: '巡检', icon: ClipboardCheck },
-    { path: '/repair', label: '报修', icon: Wrench },
-    { path: '/maintenance', label: '维修', icon: Zap },
-    { path: '/notifications', label: '通知', icon: Bell },
-    { path: '/profile', label: '个人', icon: UserIcon },
+    { path: '/', label: '棣栭〉', icon: Home },
+    { path: '/inspection', label: '宸℃', icon: ClipboardCheck },
+    { path: '/repair', label: '鎶ヤ慨', icon: Wrench },
+    { path: '/maintenance', label: '缁翠慨', icon: Zap },
+    { path: '/notifications', label: '閫氱煡', icon: Bell },
+    { path: '/profile', label: '涓汉', icon: UserIcon },
   ]
 
   const isActive = (path: string) => location.pathname === path
@@ -41,7 +41,7 @@ export function MainLayout({ user, onLogout, children }: MainLayoutProps) {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-blue-600" />
-            <h1 className="text-xl font-bold text-gray-900">设备巡检</h1>
+            <h1 className="text-xl font-bold text-gray-900">璁惧宸℃</h1>
           </div>
 
           <div className="hidden md:flex items-center gap-4">
@@ -54,7 +54,7 @@ export function MainLayout({ user, onLogout, children }: MainLayoutProps) {
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition"
             >
               <LogOut className="w-4 h-4" />
-              退出
+              閫€鍑?
             </button>
           </div>
 
@@ -101,7 +101,7 @@ export function MainLayout({ user, onLogout, children }: MainLayoutProps) {
                 className="w-full flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
               >
                 <LogOut className="w-5 h-5" />
-                退出登录
+                閫€鍑虹櫥褰?
               </button>
             </div>
           </div>

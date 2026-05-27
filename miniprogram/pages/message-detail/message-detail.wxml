@@ -1,0 +1,42 @@
+<view class="page detail-page">
+  <t-loading wx:if="{{loading}}" theme="spinner" text="加载中..." />
+
+  <block wx:else>
+    <view wx:if="{{message}}" class="detail-wrapper">
+      <!-- 消息头部 -->
+      <view class="msg-header-card">
+        <view class="msg-type-icon {{message.type === 'warning' ? 'icon-warning' : message.type === 'error' ? 'icon-error' : message.type === 'success' ? 'icon-success' : 'icon-info'}}">
+          <text>{{message.type === 'warning' ? '!' : message.type === 'error' ? '✕' : message.type === 'success' ? '✓' : 'i'}}</text>
+        </view>
+        <view class="msg-header-info">
+          <text class="msg-title">{{message.title}}</text>
+          <text class="msg-time">{{message.createdAt}}</text>
+        </view>
+      </view>
+
+      <!-- 消息内容 -->
+      <view class="content-card">
+        <text class="content-label">消息内容</text>
+        <view class="content-body">
+          <text>{{message.content}}</text>
+        </view>
+      </view>
+
+      <!-- 关联图片 -->
+      <view wx:if="{{relatedImages.length > 0}}" class="content-card">
+        <text class="content-label">相关图片</text>
+        <view class="image-grid">
+          <view
+            wx:for="{{relatedImages}}"
+            wx:key="*this"
+            class="image-item"
+            bindtap="previewImage"
+            data-src="{{item}}"
+          >
+            <image class="image-thumb" src="{{item}}" mode="aspectFill" />
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

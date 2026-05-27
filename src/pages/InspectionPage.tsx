@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { ClipboardCheck, Plus, Eye, ChevronRight } from 'lucide-react'
 import { useInspection } from '../hooks/useInspection'
 import { useInspectionStore } from '../stores/inspectionStore'
@@ -22,7 +22,7 @@ export function InspectionPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <ClipboardCheck className="w-8 h-8 text-blue-600" />
-        <h1 className="text-2xl font-bold text-gray-900">巡检管理</h1>
+        <h1 className="text-2xl font-bold text-gray-900">宸℃绠＄悊</h1>
       </div>
 
       {/* Tabs */}
@@ -35,7 +35,7 @@ export function InspectionPage() {
               : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
-          巡检计划
+          宸℃璁″垝
         </button>
         <button
           onClick={() => setActiveTab('records')}
@@ -45,7 +45,7 @@ export function InspectionPage() {
               : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
-          巡检记录
+          宸℃璁板綍
         </button>
         {currentPlan && (
           <button
@@ -56,7 +56,7 @@ export function InspectionPage() {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            执行巡检
+            鎵ц宸℃
           </button>
         )}
       </div>
@@ -74,7 +74,7 @@ export function InspectionPage() {
           {plans.length === 0 ? (
             <div className="text-center py-12">
               <ClipboardCheck className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">暂无巡检计划</p>
+              <p className="text-gray-500">鏆傛棤宸℃璁″垝</p>
             </div>
           ) : (
             plans.map((plan) => (
@@ -92,9 +92,9 @@ export function InspectionPage() {
                   </span>
                 </div>
                 <div className="space-y-1 text-sm text-gray-600 mb-4">
-                  <p>线路: {plan.routeName}</p>
-                  <p>班组: {plan.teamName}</p>
-                  <p>项目数: {plan.items?.length || 0}</p>
+                  <p>绾胯矾: {plan.routeName}</p>
+                  <p>鐝粍: {plan.teamName}</p>
+                  <p>椤圭洰鏁? {plan.items?.length || 0}</p>
                 </div>
                 <button
                   onClick={() => handleStartInspection(plan.id)}
@@ -112,7 +112,7 @@ export function InspectionPage() {
           {records.length === 0 ? (
             <div className="text-center py-12">
               <Eye className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">暂无巡检记录</p>
+              <p className="text-gray-500">鏆傛棤宸℃璁板綍</p>
             </div>
           ) : (
             records.map((record) => (
@@ -132,13 +132,13 @@ export function InspectionPage() {
                         : 'bg-yellow-100 text-yellow-700'
                     }`}
                   >
-                    {record.status === 'completed' ? '已完成' : '进行中'}
+                    {record.status === 'completed' ? '已完成 : '杩涜涓?}
                   </span>
                 </div>
                 <div className="space-y-1 text-sm text-gray-600 mb-4">
-                  <p>班组: {record.teamName}</p>
-                  <p>开始时间: {new Date(record.startTime).toLocaleString('zh-CN')}</p>
-                  <p>异常项: {record.abnormalCount}</p>
+                  <p>鐝粍: {record.teamName}</p>
+                  <p>寮€濮嬫椂闂? {new Date(record.startTime).toLocaleString('zh-CN')}</p>
+                  <p>异常项 {record.abnormalCount}</p>
                 </div>
                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition flex items-center justify-center gap-2">
                   查看详情

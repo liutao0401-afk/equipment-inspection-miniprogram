@@ -1,4 +1,4 @@
-import { Settings, Info, Trash2, Shield } from 'lucide-react'
+﻿import { Settings, Info, Trash2, Shield } from 'lucide-react'
 import { toast } from 'sonner'
 
 export function SettingsPage() {
@@ -6,9 +6,9 @@ export function SettingsPage() {
     try {
       localStorage.clear()
       sessionStorage.clear()
-      toast.success('缓存已清除')
+      toast.success('缂撳瓨宸叉竻闄?)
     } catch (error) {
-      toast.error('清除缓存失败')
+      toast.error('清除缓存澶辫触')
     }
   }
 
@@ -25,9 +25,9 @@ export function SettingsPage() {
       a.download = `inspection-data-${Date.now()}.json`
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('数据已导出')
+      toast.success('鏁版嵁宸插鍑?)
     } catch (error) {
-      toast.error('导出数据失败')
+      toast.error('导出数据澶辫触')
     }
   }
 
@@ -54,8 +54,8 @@ export function SettingsPage() {
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
-                <p className="font-medium text-gray-900">自动保存</p>
-                <p className="text-sm text-gray-600">自动保存草稿</p>
+                <p className="font-medium text-gray-900">鑷姩淇濆瓨</p>
+                <p className="text-sm text-gray-600">鑷姩淇濆瓨鑽夌</p>
               </div>
               <input type="checkbox" defaultChecked className="w-5 h-5" />
             </div>
@@ -64,7 +64,7 @@ export function SettingsPage() {
 
         {/* Data Management */}
         <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">数据管理</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">鏁版嵁绠＄悊</h2>
           <div className="space-y-3">
             <button
               onClick={handleExportData}
@@ -73,7 +73,7 @@ export function SettingsPage() {
               <Shield className="w-5 h-5 text-blue-600" />
               <div>
                 <p className="font-medium text-gray-900">导出数据</p>
-                <p className="text-sm text-gray-600">导出个人数据为 JSON</p>
+                <p className="text-sm text-gray-600">瀵煎嚭涓汉鏁版嵁涓?JSON</p>
               </div>
             </button>
             <button
@@ -83,7 +83,7 @@ export function SettingsPage() {
               <Trash2 className="w-5 h-5 text-red-600" />
               <div>
                 <p className="font-medium text-gray-900">清除缓存</p>
-                <p className="text-sm text-gray-600">清除本地存储的数据</p>
+                <p className="text-sm text-gray-600">娓呴櫎鏈湴瀛樺偍鐨勬暟鎹?/p>
               </div>
             </button>
           </div>
@@ -95,10 +95,10 @@ export function SettingsPage() {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">应用名称</span>
-              <span className="font-medium text-gray-900">设备巡检小程序</span>
+              <span className="font-medium text-gray-900">璁惧宸℃灏忕▼搴?/span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">版本号</span>
+              <span className="text-gray-600">鐗堟湰鍙?/span>
               <span className="font-medium text-gray-900">1.0.0</span>
             </div>
             <div className="flex justify-between">
@@ -117,9 +117,9 @@ export function SettingsPage() {
           <div className="flex gap-3">
             <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium mb-1">系统信息</p>
-              <p>小程序与 WEB 端共享同一数据库，所有数据实时同步。</p>
-              <p className="mt-2">如有问题，请联系系统管理员。</p>
+              <p className="font-medium mb-1">绯荤粺淇℃伅</p>
+              <p>灏忕▼搴忎笌 WEB 绔叡浜悓涓€数据库，鎵€鏈夋暟鎹疄鏃跺悓姝ャ/p>
+              <p className="mt-2">濡傛湁闂锛岃鑱旂郴绯荤粺绠＄悊鍛樸/p>
             </div>
           </div>
         </div>

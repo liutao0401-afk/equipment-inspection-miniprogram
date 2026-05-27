@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useInspectionStore } from '../stores/inspectionStore'
 import { useInspection } from '../hooks/useInspection'
 import { CheckCircle, AlertCircle, Plus, Trash2 } from 'lucide-react'
@@ -25,14 +25,14 @@ export function InspectionForm() {
     return (
       <div className="text-center py-12">
         <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500">请先选择巡检计划</p>
+        <p className="text-gray-500">璇峰厛閫夋嫨宸℃璁″垝</p>
       </div>
     )
   }
 
   const handleAddItem = () => {
     if (!newItem.itemId) {
-      toast.error('请选择巡检项')
+      toast.error('璇烽€夋嫨宸℃项)
       return
     }
 
@@ -52,19 +52,19 @@ export function InspectionForm() {
 
     addRecordItem(item)
     setNewItem({ itemId: 0, result: '', status: 'normal', remarks: '' })
-    toast.success('巡检项已添加')
+    toast.success('宸℃椤瑰凡娣诲姞')
   }
 
   const handleSubmit = async () => {
     if (recordItems.length === 0) {
-      toast.error('请至少添加一个巡检项')
+      toast.error('璇疯嚦灏戞坊鍔犱竴涓贰妫€项)
       return
     }
 
     try {
       setIsSubmitting(true)
-      // 这里需要从认证信息获取 inspectorId
-      const inspectorId = 1 // 临时使用
+      // 杩欓噷闇€瑕佷粠璁よ瘉淇℃伅鑾峰彇 inspectorId
+      const inspectorId = 1 // 涓存椂浣跨敤
       await submitInspection(currentPlan.id, inspectorId)
     } catch (error) {
       console.error('Submit error:', error)
@@ -75,28 +75,28 @@ export function InspectionForm() {
 
   return (
     <div className="space-y-6">
-      {/* 计划信息 */}
+      {/* 璁″垝淇℃伅 */}
       <div className="bg-white rounded-lg p-4 border border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-3">{currentPlan.name}</h2>
         <div className="space-y-2 text-sm text-gray-600">
-          <p>线路: {currentPlan.routeName}</p>
-          <p>班组: {currentPlan.teamName}</p>
+          <p>绾胯矾: {currentPlan.routeName}</p>
+          <p>鐝粍: {currentPlan.teamName}</p>
           <p>周期: {currentPlan.frequency}</p>
         </div>
       </div>
 
-      {/* 添加巡检项 */}
+      {/* 娣诲姞宸℃项*/}
       <div className="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">添加巡检项</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">娣诲姞宸℃项/h3>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">巡检项</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">宸℃项/label>
             <select
               value={newItem.itemId}
               onChange={(e) => setNewItem({ ...newItem, itemId: Number(e.target.value) })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value={0}>请选择巡检项</option>
+              <option value={0}>璇烽€夋嫨宸℃项/option>
               {currentPlan.items?.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.name}
@@ -106,18 +106,18 @@ export function InspectionForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">检查结果</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">妫€鏌ョ粨鏋?/label>
             <input
               type="text"
               value={newItem.result}
               onChange={(e) => setNewItem({ ...newItem, result: e.target.value })}
-              placeholder="输入检查结果"
+              placeholder="杈撳叆妫€鏌ョ粨鏋?
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">状态</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">状态/label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input
@@ -127,7 +127,7 @@ export function InspectionForm() {
                   onChange={(e) => setNewItem({ ...newItem, status: e.target.value as any })}
                   className="w-4 h-4"
                 />
-                <span className="text-sm text-gray-700">正常</span>
+                <span className="text-sm text-gray-700">姝ｅ父</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -137,17 +137,17 @@ export function InspectionForm() {
                   onChange={(e) => setNewItem({ ...newItem, status: e.target.value as any })}
                   className="w-4 h-4"
                 />
-                <span className="text-sm text-gray-700">异常</span>
+                <span className="text-sm text-gray-700">寮傚父</span>
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">备注</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">澶囨敞</label>
             <textarea
               value={newItem.remarks}
               onChange={(e) => setNewItem({ ...newItem, remarks: e.target.value })}
-              placeholder="输入备注信息"
+              placeholder="杈撳叆澶囨敞淇℃伅"
               rows={3}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -158,18 +158,18 @@ export function InspectionForm() {
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            添加巡检项
+            娣诲姞宸℃项
           </button>
         </div>
       </div>
 
-      {/* 巡检项列表 */}
+      {/* 宸℃椤瑰垪琛?*/}
       <div className="bg-white rounded-lg p-4 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          巡检项列表 ({recordItems.length})
+          宸℃椤瑰垪琛?({recordItems.length})
         </h3>
         {recordItems.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">暂无巡检项</p>
+          <p className="text-center text-gray-500 py-8">鏆傛棤宸℃项/p>
         ) : (
           <div className="space-y-3">
             {recordItems.map((item) => (
@@ -184,11 +184,11 @@ export function InspectionForm() {
                           : 'bg-red-100 text-red-700'
                       }`}
                     >
-                      {item.status === 'normal' ? '正常' : '异常'}
+                      {item.status === 'normal' ? '姝ｅ父' : '寮傚父'}
                     </span>
                   </div>
-                  {item.result && <p className="text-sm text-gray-600">结果: {item.result}</p>}
-                  {item.remarks && <p className="text-sm text-gray-600">备注: {item.remarks}</p>}
+                  {item.result && <p className="text-sm text-gray-600">缁撴灉: {item.result}</p>}
+                  {item.remarks && <p className="text-sm text-gray-600">澶囨敞: {item.remarks}</p>}
                 </div>
                 <button
                   onClick={() => removeRecordItem(item.id)}
@@ -202,14 +202,14 @@ export function InspectionForm() {
         )}
       </div>
 
-      {/* 提交按钮 */}
+      {/* 鎻愪氦鎸夐挳 */}
       <button
         onClick={handleSubmit}
         disabled={isSubmitting || recordItems.length === 0}
         className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-3 rounded-lg transition flex items-center justify-center gap-2"
       >
         <CheckCircle className="w-5 h-5" />
-        {isSubmitting ? '提交中...' : '提交巡检记录'}
+        {isSubmitting ? '鎻愪氦涓?..' : '鎻愪氦宸℃璁板綍'}
       </button>
     </div>
   )

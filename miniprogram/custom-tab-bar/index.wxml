@@ -1,0 +1,14 @@
+<view class="tab-shell">
+  <view class="tab-bar" style="{{gridStyle}}">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="pagePath"
+      class="tab-item {{active === index ? 'active' : ''}}"
+      data-index="{{index}}"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">{{item.icon}}</view>
+      <text class="tab-text">{{item.text}}</text>
+    </view>
+  </view>
+</view>

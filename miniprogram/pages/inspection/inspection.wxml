@@ -1,0 +1,352 @@
+<view class="page inspection-page">
+  <!-- 加载中 -->
+  <t-loading wx:if="{{loading}}" theme="spinner" text="加载中..." />
+
+  <block wx:else>
+    <!-- ===== 步骤1: 计划列表 ===== -->
+    <block wx:if="{{step === 'plans'}}">
+      <view class="header">
+        <view class="header-left">
+          <t-icon name="file" size="36rpx" />
+          <text class="page-title">巡检计划</text>
+        </view>
+        <text class="header-hint">选择计划后开始巡检</text>
+      </view>
+
+      <view wx:if="{{plans.length === 0}}" class="empty-state">
+        <t-icon name="file" size="80rpx" />
+        <text class="empty-text">暂无可用巡检计划</text>
+      </view>
+
+      <view wx:else class="plan-list">
+        <view
+          wx:for="{{plans}}"
+          wx:key="id"
+          class="card plan-card"
+          bindtap="selectPlan"
+          data-id="{{item.id}}"
+        >
+          <view class="plan-card-header">
+            <text class="plan-name">{{item.routeName || '未命名线路'}}</text>
+            <text class="plan-badge {{item.isActive ? 'badge-active' : 'badge-inactive'}}">
+              {{item.isActive ? '启用' : '停用'}}
+            </text>
+          </view>
+          <view class="plan-card-body">
+            <view class="plan-info-item">
+              <text class="plan-info-label">班组</text>
+              <text class="plan-info-value">{{item.teamName || '未指派'}}</text>
+            </view>
+            <view class="plan-info-item">
+              <text class="plan-info-label">周期</text>
+              <text class="plan-info-value cycle-tag">{{item.cycleName || item.frequency}}</text>
+            </view>
+          </view>
+          <view class="plan-card-footer">
+            <text class="plan-date">{{item.startDate}} ~ {{item.endDate || '长期'}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ===== 步骤2: 设备选择 ===== -->
+    <block wx:elif="{{step === 'select'}}">
+      <!-- 步骤指示器 -->
+      <view class="step-indicator">
+        <view class="step-item step-active">
+          <text class="step-num">1</text>
+          <text class="step-label">选择设备</text>
+        </view>
+        <view class="step-arrow">
+          <t-icon name="chevron-right" size="28rpx" />
+        </view>
+        <view class="step-item">
+          <text class="step-num">2</text>
+          <text class="step-label">执行巡检</text>
+        </view>
+      </view>
+
+      <!-- 巡检人员 -->
+      <view class="card section-card">
+        <view class="section-title">
+          <t-icon name="user" size="32rpx" />
+          <text>巡检人员</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{staffs}}"
+          range-key="name"
+          value="{{staffIdx}}"
+          bindchange="onStaffChange"
+        >
+          <view class="picker-row">
+            <text wx:if="{{staffs.length > 0}}" class="picker-value">
+              {{staffs[staffIdx].name}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择巡检人员</text>
+            <t-icon name="chevron-down" size="28rpx" />
+          </view>
+        </picker>
+      </view>
+
+      <!-- 筛选条件 -->
+      <view class="card section-card">
+        <view class="section-title">
+          <t-icon name="filter" size="32rpx" />
+          <text>筛选条件</text>
+        </view>
+        <view class="filter-grid">
+          <picker
+            mode="selector"
+            range="{{routeFilterOptions}}"
+            range-key="name"
+            value="{{routeFilterIdx}}"
+            bindchange="onRouteFilter"
+          >
+            <view class="filter-item">
+              <text class="filter-label">线路</text>
+              <view class="filter-value-row">
+                <text class="filter-value">{{routeFilterOptions[routeFilterIdx].name}}</text>
+                <t-icon name="chevron-down" size="24rpx" />
+              </view>
+            </view>
+          </picker>
+          <picker
+            mode="selector"
+            range="{{areaFilterOptions}}"
+            range-key="name"
+            value="{{areaFilterIdx}}"
+            bindchange="onAreaFilter"
+          >
+            <view class="filter-item">
+              <text class="filter-label">区域</text>
+              <view class="filter-value-row">
+                <text class="filter-value">{{areaFilterOptions[areaFilterIdx].name}}</text>
+                <t-icon name="chevron-down" size="24rpx" />
+              </view>
+            </view>
+          </picker>
+          <view class="filter-item search-item">
+            <text class="filter-label">搜索</text>
+            <input
+              class="search-input"
+              placeholder="位号/名称/型号 自动筛选"
+              value="{{searchQuery}}"
+              bindinput="onSearchInput"
+            />
+          </view>
+        </view>
+        <view wx:if="{{selectedRouteId || selectedAreaId || searchQuery}}" class="clear-filter" bindtap="clearFilters">
+          <text>清除筛选</text>
+        </view>
+      </view>
+
+      <!-- 顶部操作栏 -->
+      <view class="device-toolbar">
+        <view class="toolbar-title">
+          <t-icon name="setting" size="28rpx" />
+          <text>待巡检设备</text>
+          <text class="device-count">{{filteredDevices.length}} 台</text>
+        </view>
+        <t-button size="small" variant="outline" bind:tap="backToPlans">返回计划</t-button>
+      </view>
+
+      <!-- 设备列表 -->
+      <view wx:if="{{filteredDevices.length === 0}}" class="empty-state">
+        <t-icon name="server" size="80rpx" />
+        <text class="empty-text">暂无符合条件的设备</text>
+      </view>
+
+      <view wx:else class="device-grid">
+        <view
+          wx:for="{{filteredDevices}}"
+          wx:key="id"
+          class="card device-card {{item._inspected ? 'device-inspected' : ''}}"
+          bindtap="startInspection"
+          data-id="{{item.id}}"
+        >
+          <view class="device-card-header">
+            <view class="device-type-icon {{item.type === 'motor' ? 'icon-motor' : 'icon-instrument'}}">
+              <t-icon name="{{item.type === 'motor' ? 'power-setting' : 'chart'}}" size="28rpx" />
+            </view>
+            <view class="device-name-area">
+              <text class="device-name">{{item.name}}</text>
+              <text class="device-code">{{item.code}}</text>
+            </view>
+            <text class="device-type-tag">{{item._typeLabel}}</text>
+          </view>
+          <view class="device-card-body">
+            <text class="device-detail">型号：{{item.model || '-'}}</text>
+            <text class="device-detail">位置：{{item.location || '-'}}</text>
+          </view>
+          <view class="device-card-footer">
+            <view wx:if="{{item._inspected}}" class="inspected-badge">
+              <t-icon name="check-circle" size="24rpx" />
+              <text>本周期已巡检</text>
+            </view>
+            <view wx:else class="start-btn">开始巡检</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ===== 步骤3: 执行巡检 ===== -->
+    <block wx:elif="{{step === 'inspect'}}">
+      <!-- 步骤指示器 -->
+      <view class="step-indicator">
+        <view class="step-item step-done">
+          <text class="step-num">1</text>
+          <text class="step-label">选择设备</text>
+        </view>
+        <view class="step-arrow">
+          <t-icon name="chevron-right" size="28rpx" />
+        </view>
+        <view class="step-item step-active">
+          <text class="step-num">2</text>
+          <text class="step-label">执行巡检</text>
+        </view>
+      </view>
+
+      <!-- 当前设备信息 -->
+      <view class="card current-device-card">
+        <view class="current-device-header">
+          <view class="device-type-icon large {{currentDevice.type === 'motor' ? 'icon-motor' : 'icon-instrument'}}">
+            <t-icon name="{{currentDevice.type === 'motor' ? 'power-setting' : 'chart'}}" size="36rpx" />
+          </view>
+          <view class="current-device-info">
+            <text class="current-device-name">{{currentDevice.name}}</text>
+            <text class="current-device-meta">{{currentDevice.code}} · {{currentDevice.model}}</text>
+            <text class="current-device-meta">{{currentDevice.location}}</text>
+          </view>
+          <text class="device-type-tag">{{currentDevice._typeLabel}}</text>
+        </view>
+      </view>
+
+      <!-- 巡检项目 -->
+      <view class="card">
+        <view class="section-title">
+          <t-icon name="checklist" size="32rpx" />
+          <text>巡检项目</text>
+          <text wx:if="{{hasAbnormal}}" class="abnormal-badge">存在异常</text>
+        </view>
+
+        <view class="inspect-items">
+          <view
+            wx:for="{{inspectionItems}}"
+            wx:key="type"
+            class="inspect-item {{item.status === 'abnormal' ? 'item-abnormal' : ''}}"
+            bindtap="toggleItem"
+            data-index="{{index}}"
+          >
+            <view class="inspect-item-left">
+              <text class="inspect-item-index">{{index + 1}}</text>
+              <text class="inspect-item-name">{{item.name}}</text>
+            </view>
+            <view class="inspect-item-status {{item.status === 'normal' ? 'status-normal' : 'status-abnormal'}}">
+              <t-icon name="{{item.status === 'normal' ? 'check-circle' : 'close-circle'}}" size="28rpx" />
+              <text>{{item.status === 'normal' ? '正常' : '异常'}}</text>
+            </view>
+          </view>
+          <view wx:if="{{item.status === 'abnormal' && item.remark}}" class="abnormal-remark">
+            <text>备注：{{item.remark}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 总体备注 -->
+      <view class="card">
+        <view class="section-title">
+          <t-icon name="edit" size="32rpx" />
+          <text>总体备注</text>
+        </view>
+        <textarea
+          class="remark-textarea"
+          placeholder="输入巡检总体备注（可选）"
+          value="{{overallRemark}}"
+          bindinput="onOverallRemarkInput"
+        />
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="action-bar">
+        <t-button
+          block
+          theme="primary"
+          loading="{{submitting}}"
+          bind:tap="submitInspection"
+          data-create-repair="false"
+        >
+          完成巡检
+        </t-button>
+        <view wx:if="{{hasAbnormal}}" class="action-secondary">
+          <t-button
+            block
+            theme="danger"
+            loading="{{submitting}}"
+            bind:tap="submitInspection"
+            data-create-repair="true"
+          >
+            完成并创建报修
+          </t-button>
+        </view>
+        <t-button block variant="outline" bind:tap="backToSelect" class="back-btn">返回设备列表</t-button>
+      </view>
+    </block>
+  </block>
+
+  <!-- ===== 异常备注弹窗 ===== -->
+  <t-popup
+    visible="{{showAbnormalPopup}}"
+    placement="bottom"
+    bind:visible-change="closeAbnormalPopup"
+  >
+    <view class="abnormal-popup">
+      <view class="popup-header">
+        <text class="popup-title">异常情况备注</text>
+        <t-button size="small" variant="text" bind:tap="closeAbnormalPopup">取消</t-button>
+      </view>
+      <view class="popup-body">
+        <text class="popup-desc">
+          巡检项：{{abnormalItemName}}
+        </text>
+        <textarea
+          class="abnormal-textarea"
+          placeholder="请详细描述异常情况"
+          value="{{abnormalRemark}}"
+          bindinput="onAbnormalRemarkInput"
+        />
+        <!-- 照片区域 -->
+        <view class="photo-section">
+          <text class="photo-section-label">现场照片</text>
+          <view class="photo-grid">
+            <view
+              wx:for="{{currentAbnormalPhotos}}"
+              wx:key="*this"
+              class="photo-item"
+            >
+              <image class="photo-thumb" src="{{item}}" mode="aspectFill" />
+              <view class="photo-remove" bindtap="removePhoto" data-index="{{index}}">
+                <t-icon name="close-circle-filled" size="36rpx" />
+              </view>
+            </view>
+            <view wx:if="{{currentAbnormalPhotos.length < 3}}" class="photo-add" bindtap="takePhoto">
+              <t-icon name="camera" size="48rpx" />
+              <text class="photo-add-text">拍照</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="popup-footer">
+        <t-button block theme="danger" bind:tap="confirmAbnormal">确认异常</t-button>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- ===== 删除确认弹窗（保留以供参考，暂未使用） ===== -->
+  <t-dialog
+    visible="{{false}}"
+    title="确认"
+    confirmBtn="确定"
+    cancelBtn="取消"
+  />
+</view>

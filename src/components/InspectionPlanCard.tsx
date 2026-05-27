@@ -1,6 +1,6 @@
-/**
- * 巡检计划卡片组件
- * 使用 React.memo 优化性能
+﻿/**
+ * 宸℃璁″垝鍗＄墖缁勪欢
+ * 浣跨敤 React.memo 浼樺寲鎬ц兘
  */
 
 import { memo } from 'react'
@@ -28,9 +28,9 @@ export const InspectionPlanCard = memo(function InspectionPlanCard({
         </span>
       </div>
       <div className="space-y-1 text-sm text-gray-600 mb-4">
-        <p>线路: {plan.routeName}</p>
-        <p>班组: {plan.teamName}</p>
-        <p>项目数: {plan.items?.length || 0}</p>
+        <p>绾胯矾: {plan.routeName}</p>
+        <p>鐝粍: {plan.teamName}</p>
+        <p>椤圭洰鏁? {plan.items?.length || 0}</p>
       </div>
       <button
         onClick={() => onStartInspection?.(plan)}

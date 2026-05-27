@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,8 +8,8 @@ import { Upload, X, Send } from 'lucide-react'
 import { toast } from 'sonner'
 
 const repairSchema = z.object({
-  deviceId: z.number().min(1, '请选择设备'),
-  description: z.string().min(10, '描述至少 10 个字符'),
+  deviceId: z.number().min(1, '璇烽€夋嫨璁惧'),
+  description: z.string().min(10, '鎻忚堪鑷冲皯 10 涓瓧绗?),
   priority: z.enum(['low', 'medium', 'high']),
 })
 
@@ -31,7 +31,7 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const onImageUpload = (imageList: ImageListType) => {
     if (imageList.length + images.length > 5) {
-      toast.error('最多只能上传 5 张图片')
+      toast.error('鏈€澶氬彧鑳戒笂浼?5 寮犲浘鐗?)
       return
     }
     setImages([...images, ...imageList])
@@ -45,7 +45,7 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
     try {
       setIsSubmitting(true)
 
-      // 转换图片为 Base64
+      // 杞崲鍥剧墖涓?Base64
       const imageBase64 = images.map((img) => img.dataURL as string)
 
       await createRepair({
@@ -68,15 +68,15 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* 设备选择 */}
+      {/* 璁惧閫夋嫨 */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">设备</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">璁惧</label>
         <div className="space-y-2">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="搜索设备..."
+            placeholder="鎼滅储璁惧..."
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
@@ -100,18 +100,18 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
           )}
 
           {searchQuery && devices.length === 0 && (
-            <p className="text-sm text-gray-500">未找到匹配的设备</p>
+            <p className="text-sm text-gray-500">鏈壘鍒板尮閰嶇殑璁惧</p>
           )}
         </div>
         {errors.deviceId && <p className="text-sm text-red-600 mt-1">{errors.deviceId.message}</p>}
       </div>
 
-      {/* 故障描述 */}
+      {/* 鏁呴殰鎻忚堪 */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">故障描述</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">鏁呴殰鎻忚堪</label>
         <textarea
           {...register('description')}
-          placeholder="请详细描述故障情况..."
+          placeholder="璇疯缁嗘弿杩版晠闅滄儏鍐?.."
           rows={4}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
@@ -120,24 +120,24 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
         )}
       </div>
 
-      {/* 优先级 */}
+      {/* 浼樺厛绾?*/}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">优先级</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">浼樺厛绾?/label>
         <select
           {...register('priority')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="low">低</option>
-          <option value="medium">中</option>
-          <option value="high">高</option>
+          <option value="low">浣?/option>
+          <option value="medium">涓?/option>
+          <option value="high">楂?/option>
         </select>
         {errors.priority && <p className="text-sm text-red-600 mt-1">{errors.priority.message}</p>}
       </div>
 
-      {/* 图片上传 */}
+      {/* 鍥剧墖涓婁紶 */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          上传照片 ({images.length}/5)
+          涓婁紶鐓х墖 ({images.length}/5)
         </label>
         <ImageUploading
           value={images}
@@ -154,7 +154,7 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
                 className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition flex flex-col items-center gap-2"
               >
                 <Upload className="w-6 h-6 text-gray-400" />
-                <span className="text-sm text-gray-600">点击或拖拽上传图片</span>
+                <span className="text-sm text-gray-600">鐐瑰嚮鎴栨嫋鎷戒笂浼犲浘鐗?/span>
               </button>
 
               {imageList.length > 0 && (
@@ -184,14 +184,14 @@ export function RepairForm({ onSuccess }: { onSuccess?: () => void }) {
         </ImageUploading>
       </div>
 
-      {/* 提交按钮 */}
+      {/* 鎻愪氦鎸夐挳 */}
       <button
         type="submit"
         disabled={isSubmitting}
         className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 rounded-lg transition flex items-center justify-center gap-2"
       >
         <Send className="w-5 h-5" />
-        {isSubmitting ? '提交中...' : '提交报修单'}
+        {isSubmitting ? '鎻愪氦涓?..' : '鎻愪氦维修单}
       </button>
     </form>
   )

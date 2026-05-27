@@ -47,3 +47,6 @@ dist-ssr
 *.pem
 .claude/
 **/.claude/
+
+# Miniprogram build artifacts
+miniprogram/miniprogram_npm/

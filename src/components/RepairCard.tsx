@@ -1,6 +1,6 @@
-/**
- * 报修单卡片组件
- * 使用 React.memo 优化性能
+﻿/**
+ * 鎶ヤ慨鍗曞崱鐗囩粍浠?
+ * 浣跨敤 React.memo 浼樺寲鎬ц兘
  */
 
 import { memo } from 'react'
@@ -34,13 +34,13 @@ export const RepairCard = memo(function RepairCard({
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'pending':
-        return '待派单'
+        return '待修单
       case 'processing':
-        return '处理中'
+        return '处理中
       case 'repaired':
-        return '已修复'
+        return '已修好
       case 'accepted':
-        return '已验收'
+        return '已验收
       default:
         return status
     }
@@ -59,7 +59,7 @@ export const RepairCard = memo(function RepairCard({
       </div>
       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{repair.description}</p>
       <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
-        <span>报告人: {repair.reporterName}</span>
+        <span>鎶ュ憡浜? {repair.reporterName}</span>
         <span>{new Date(repair.createdAt || '').toLocaleString('zh-CN')}</span>
       </div>
       <button

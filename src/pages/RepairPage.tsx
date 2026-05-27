@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Wrench, Plus, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { repairApi } from '../lib/api'
@@ -21,7 +21,7 @@ export function RepairPage() {
       setRepairs(data.data)
     } catch (error) {
       console.error('Failed to load repairs:', error)
-      toast.error('加载报修单失败')
+      toast.error('加载维修单失败)
     } finally {
       setIsLoading(false)
     }
@@ -45,13 +45,13 @@ export function RepairPage() {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'pending':
-        return '待派单'
+        return '待修单
       case 'processing':
-        return '处理中'
+        return '处理中
       case 'repaired':
-        return '已修复'
+        return '已修好
       case 'accepted':
-        return '已验收'
+        return '已验收
       default:
         return status
     }
@@ -68,7 +68,7 @@ export function RepairPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Wrench className="w-8 h-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900">报修单</h1>
+          <h1 className="text-2xl font-bold text-gray-900">维修单/h1>
         </div>
         {true && (
           <button
@@ -76,7 +76,7 @@ export function RepairPage() {
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
           >
             <Plus className="w-4 h-4" />
-            新增
+            鏂板
           </button>
         )}
       </div>
@@ -85,12 +85,12 @@ export function RepairPage() {
       {showCreateForm && true && (
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">创建报修单</h2>
+            <h2 className="text-lg font-semibold text-gray-900">鍒涘缓维修单/h2>
             <button
               onClick={() => setShowCreateForm(false)}
               className="text-gray-500 hover:text-gray-700"
             >
-              ✕
+              鉁?
             </button>
           </div>
           <RepairForm onSuccess={handleFormSuccess} />
@@ -108,7 +108,7 @@ export function RepairPage() {
       ) : repairs.length === 0 ? (
         <div className="text-center py-12">
           <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">暂无报修单</p>
+          <p className="text-gray-500">暂无维修单/p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -128,7 +128,7 @@ export function RepairPage() {
               </div>
               <p className="text-sm text-gray-600 mb-3">{repair.description}</p>
               <div className="flex justify-between items-center text-xs text-gray-500">
-                <span>报告人: {repair.reporterName}</span>
+                <span>鎶ュ憡浜? {repair.reporterName}</span>
                 <span>{new Date(repair.createdAt || '').toLocaleString('zh-CN')}</span>
               </div>
               <button className="w-full mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition">

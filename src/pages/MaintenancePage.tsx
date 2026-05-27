@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Zap, CheckCircle, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { maintenanceApi } from '../lib/api'
@@ -26,7 +26,7 @@ export function MaintenancePage() {
       setMaintenance(filtered)
     } catch (error) {
       console.error('Failed to load maintenance:', error)
-      toast.error('加载维修列表失败')
+      toast.error('加载维护列表失败')
     } finally {
       setIsLoading(false)
     }
@@ -48,7 +48,7 @@ export function MaintenancePage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Zap className="w-8 h-8 text-blue-600" />
-        <h1 className="text-2xl font-bold text-gray-900">维修管理</h1>
+        <h1 className="text-2xl font-bold text-gray-900">缁翠慨绠＄悊</h1>
       </div>
 
       {/* Tabs */}
@@ -61,7 +61,7 @@ export function MaintenancePage() {
               : 'border-transparent text-gray-600 hover:text-gray-900'
           }`}
         >
-          进行中
+          杩涜涓?
         </button>
         <button
           onClick={() => setActiveTab('completed')}
@@ -79,7 +79,7 @@ export function MaintenancePage() {
       {showForm && selectedMaintenance && (
         <div className="bg-white rounded-lg p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">完成维修</h2>
+            <h2 className="text-lg font-semibold text-gray-900">瀹屾垚缁翠慨</h2>
             <button
               onClick={() => {
                 setShowForm(false)
@@ -87,7 +87,7 @@ export function MaintenancePage() {
               }}
               className="text-gray-500 hover:text-gray-700"
             >
-              ✕
+              鉁?
             </button>
           </div>
           <MaintenanceForm maintenance={selectedMaintenance} onSuccess={handleFormSuccess} />
@@ -110,7 +110,7 @@ export function MaintenancePage() {
             <CheckCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           )}
           <p className="text-gray-500">
-            {activeTab === 'pending' ? '暂无进行中的维修' : '暂无已完成的维修'}
+            {activeTab === 'pending' ? '鏆傛棤杩涜涓殑缁翠慨' : '暂无完成的维护'}
           </p>
         </div>
       ) : (
@@ -130,18 +130,18 @@ export function MaintenancePage() {
                     ? 'bg-green-100 text-green-700'
                     : 'bg-yellow-100 text-yellow-700'
                 }`}>
-                  {item.status === 'completed' ? '已完成' : '进行中'}
+                  {item.status === 'completed' ? '已完成 : '杩涜涓?}
                 </span>
               </div>
               <div className="space-y-1 text-sm text-gray-600 mb-4">
-                <p>维修类型: {item.type}</p>
-                <p>维修员: {item.maintainerName}</p>
-                <p>班组: {item.teamName}</p>
+                <p>缁翠慨绫诲瀷: {item.type}</p>
+                <p>缁翠慨鍛? {item.maintainerName}</p>
+                <p>鐝粍: {item.teamName}</p>
                 {item.startTime && (
-                  <p>开始时间: {new Date(item.startTime).toLocaleString('zh-CN')}</p>
+                  <p>寮€濮嬫椂闂? {new Date(item.startTime).toLocaleString('zh-CN')}</p>
                 )}
                 {item.completedTime && (
-                  <p>完成时间: {new Date(item.completedTime).toLocaleString('zh-CN')}</p>
+                  <p>瀹屾垚鏃堕棿: {new Date(item.completedTime).toLocaleString('zh-CN')}</p>
                 )}
               </div>
               {item.maintenanceDetails && (
@@ -153,7 +153,7 @@ export function MaintenancePage() {
                 onClick={() => handleSelectMaintenance(item)}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition"
               >
-                {activeTab === 'pending' ? '完成维修' : '查看详情'}
+                {activeTab === 'pending' ? '瀹屾垚缁翠慨' : '查看详情'}
               </button>
             </div>
           ))}

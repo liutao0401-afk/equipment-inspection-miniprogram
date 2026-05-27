@@ -1,20 +1,98 @@
-/* app.wxss - 全局样式 */
 page {
-  background-color: #F8FAFC;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f7fa;
+  color: #1d2939;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 28rpx;
-  color: #1E293B;
   box-sizing: border-box;
 }
 
-/* 全屏 web-view */
-.webview-container {
-  width: 100%;
-  height: 100vh;
-  position: relative;
+view,
+text,
+input,
+textarea {
+  box-sizing: border-box;
 }
 
-web-view {
+.page {
+  min-height: 100vh;
+  padding: 24rpx 24rpx 168rpx;
+}
+
+.section {
+  margin-bottom: 24rpx;
+}
+
+.card {
+  background: #ffffff;
+  border: 1rpx solid #eef0f4;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 12rpx 32rpx rgba(16, 24, 40, 0.05);
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #101828;
+}
+
+.subtitle {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #667085;
+}
+
+.field {
+  margin-bottom: 24rpx;
+}
+
+.label {
+  display: block;
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #344054;
+}
+
+.input,
+.textarea {
   width: 100%;
-  height: 100%;
+  min-height: 88rpx;
+  padding: 20rpx 24rpx;
+  border: 1rpx solid #d0d5dd;
+  border-radius: 12rpx;
+  background: #ffffff;
+  font-size: 28rpx;
+}
+
+.textarea {
+  min-height: 180rpx;
+}
+
+.muted {
+  color: #667085;
+}
+
+.empty {
+  padding: 64rpx 24rpx;
+  text-align: center;
+  color: #98a2b3;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  background: #eef4ff;
+  color: #0052d9;
+  font-size: 24rpx;
 }
