@@ -116,21 +116,25 @@
               </view>
             </view>
           </picker>
-          <picker
-            mode="selector"
-            range="{{areaFilterOptions}}"
-            range-key="name"
-            value="{{areaFilterIdx}}"
-            bindchange="onAreaFilter"
-          >
-            <view class="filter-item">
-              <text class="filter-label">区域</text>
+          <view class="filter-item scan-area-item">
+            <text class="filter-label">区域</text>
+            <picker
+              mode="selector"
+              range="{{areaFilterOptions}}"
+              range-key="name"
+              value="{{areaFilterIdx}}"
+              bindchange="onAreaFilter"
+              class="area-picker"
+            >
               <view class="filter-value-row">
                 <text class="filter-value">{{areaFilterOptions[areaFilterIdx].name}}</text>
                 <t-icon name="chevron-down" size="24rpx" />
               </view>
+            </picker>
+            <view class="scan-area-btn" bindtap="scanAreaCode">
+              <t-icon name="scan" size="32rpx" />
             </view>
-          </picker>
+          </view>
           <view class="filter-item search-item">
             <text class="filter-label">搜索</text>
             <input

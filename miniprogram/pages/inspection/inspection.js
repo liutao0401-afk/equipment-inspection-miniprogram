@@ -381,6 +381,71 @@ Page({
     this.applyFilters()
   },
 
+  // ==================== 扫码区域 ====================
+
+  scanAreaCode() {
+    wx.scanCode({
+      success: (res) => {
+        const scannedText = res.result || ''
+        this._matchAndSetArea(scannedText)
+      },
+      fail: () => {
+        // 用户取消扫码，忽略
+      },
+    })
+  },
+
+  _matchAndSetArea(scannedText) {
+    if (!scannedText) return
+    const { areas, areaFilterOptions } = this.data
+
+    // 尝试按名称完全匹配
+    let matchedArea = areas.find(a => a.name === scannedText.trim())
+
+    // 尝试解析 AREA:{id}:{name} 格式
+    if (!matchedArea) {
+      const areaMatch = scannedText.match(/^AREA:\s*(\d+)\s*:\s*(.+)$/i)
+      if (areaMatch) {
+        const id = areaMatch[1]
+        const name = areaMatch[2].trim()
+        matchedArea = areas.find(a => String(a.id) === id || a.name === name)
+      }
+    }
+
+    // 尝试按名称包含匹配
+    if (!matchedArea) {
+      matchedArea = areas.find(a => scannedText.includes(a.name) || a.name.includes(scannedText))
+    }
+
+    // 尝试解析 URL 参数中 areaId 或 name
+    if (!matchedArea) {
+      try {
+        const url = new URL(scannedText)
+        const areaId = url.searchParams.get('areaId') || url.searchParams.get('id')
+        const name = url.searchParams.get('name') || decodeURIComponent(url.pathname.split('/').pop() || '')
+        if (areaId) matchedArea = areas.find(a => String(a.id) === areaId)
+        if (!matchedArea && name) matchedArea = areas.find(a => a.name === name || a.name.includes(name))
+      } catch {
+        // 不是 URL 格式，忽略
+      }
+    }
+
+    if (matchedArea) {
+      const idx = areaFilterOptions.findIndex(o => o.id === matchedArea.id)
+      if (idx >= 0) {
+        this.setData({
+          areaFilterIdx: idx,
+          selectedAreaId: matchedArea.id,
+        })
+        this.applyFilters()
+        wx.showToast({ title: `已筛选区域: ${matchedArea.name}`, icon: 'none' })
+        return
+      }
+    }
+
+    wx.showToast({ title: '未识别的区域二维码', icon: 'none' })
+  },
+
   applyFilters() {
     const { devices, routes, selectedRouteId, selectedAreaId, searchQuery, inspectedDeviceIds, selectedPlanFrequency } = this.data
     let result = [...devices]
